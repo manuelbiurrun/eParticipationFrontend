@@ -1,0 +1,281 @@
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { Footer } from "../../components/Footer";
+import { NotiBienvenida, NotiError } from "../../components/Notification";
+import { Button } from "react-bootstrap";
+/* import ciudadano from "../../datosPrueba/ciudadano";
+import iniciativas from "../../datosPrueba/iniciativas";
+import procesos from "../../datosPrueba/procesos"; */
+import Modal, { ModalProvider } from "styled-react-modal";
+import {
+  getUsuario,
+  getIniciativas,
+  getProcesos,
+  fetchUserID,
+} from "../../services/Requests";
+
+const StyledModal = Modal.styled`
+  border-radius: 5px;
+  padding: 1.5%;
+  width: 25%;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  overflow-y:inherit !important;
+
+  .cuerpo{
+    margin-bottom: 15px;
+  }
+  .abajo{
+    text-align: right;
+  }
+  Button {
+    margin-left: 5px;
+  }
+`;
+
+const Styles = styled.div`
+  h1 {
+    padding-top: 15px;
+  }
+  #izquierda {
+    width: 45%;
+    float: left;
+    color: black;
+    padding: 15px;
+    margin-top: 10px;
+    margin-left: 30px;
+    margin-bottom: 70px;
+    height: 43rem;
+    border-radius: 10px;
+    overflow: scroll;
+    border-style: solid;
+  }
+  #izquierda::-webkit-scrollbar {
+    display: none;
+  }
+  #derecha {
+    width: 45%;
+    float: right;
+    color: black;
+    padding: 15px;
+    margin-top: 10px;
+    margin-right: 30px;
+    height: 43rem;
+    border-radius: 10px;
+    overflow: scroll;
+    border-style: solid;
+    margin-bottom: 70px;
+  }
+  #derecha::-webkit-scrollbar {
+    display: none;
+  }
+  article {
+    width: 100%;
+    padding: 10px;
+    float: left;
+    background-color: white;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
+  Button {
+    float: right;
+    margin-left: 10px;
+  }
+  figure {
+    float: right;
+  }
+`;
+
+export default function Home() {
+  const usuario = fetchUserID();
+  const onAnyButtonClick = () => {
+    NotiBienvenida("por favor, iniciar sesion");
+  };
+
+  const [iniciativas, setIniciativas] = useState([]);
+  const [procesos, setProcesos] = useState([]);
+  const [funcionario, setFuncionario] = useState({
+    nombre: "",
+    correo: "",
+    fechaNac: "",
+    domicilio: "",
+    nacionalidad: "",
+  });
+
+  useEffect(() => {
+    getIniciativas()
+      .then((response) => {
+        setIniciativas(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    getProcesos()
+      .then((response) => {
+        console.log(response);
+        setProcesos(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    getUsuario(usuario)
+      .then((response) => {
+        setFuncionario(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [iniciativaId, setIniciativaId] = useState();
+  const [seguidores, setSeguidores] = useState([]);
+  const [adheridos, setAdheridos] = useState([]);
+  const [isOpenSeguidores, setIsOpenSeguidores] = useState(false);
+  const [isOpenAdheridos, setIsOpenAdheridos] = useState(false);
+
+  const toggleModalSeguidores = () => {
+    setIsOpenSeguidores(!isOpenSeguidores);
+  };
+
+  const toggleModalAdheridos = () => {
+    setIsOpenAdheridos(!isOpenAdheridos);
+  };
+
+  return (
+    <Styles>
+      <ModalProvider>
+        <nav>
+          <h1 align="center">Bienvenido {funcionario.nombre}!!</h1>
+        </nav>
+        <aside id="izquierda">
+          {iniciativas.map((ini) => {
+            return (
+              <article key={ini.nombre}>
+                <figure>
+                  <img
+                    src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
+                    alt="The Pulpit Rock"
+                    width="160"
+                    height="115"
+                  />
+                </figure>
+                <h6>{ini.fecha}</h6>
+                <h1>{ini.nombre}</h1>
+                <p>{ini.descripcion}</p>
+                <Button href={"/iniciativa?nombre=" + ini.nombre}>
+                  Ver mas
+                </Button>
+                <Button
+                  id="botonSeguir"
+                  onClick={() => {
+                    setIniciativaId(ini.nombre);
+                    setSeguidores(ini.seguidores);
+                    toggleModalSeguidores();
+                  }}
+                >
+                  Seguidores
+                </Button>
+                <Button
+                  id="adButton"
+                  onClick={() => {
+                    setIniciativaId(ini.nombre);
+                    setAdheridos(ini.adheridos);
+                    toggleModalAdheridos();
+                  }}
+                >
+                  Adheridos
+                </Button>
+              </article>
+            );
+          })}
+        </aside>
+        <aside id="derecha">
+          {procesos.map((procs) => {
+            return (
+              <article key={procs.nombre}>
+                <figure>
+                  <img
+                    src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
+                    alt="The Pulpit Rock"
+                    width="160"
+                    height="115"
+                  />
+                </figure>
+                <h6>{procs.fecha}</h6>
+                <h1>{procs.nombre}</h1>
+                <p>{procs.descripcion}</p>
+                <Button
+                  onClick={() => {
+                    onAnyButtonClick();
+                  }}
+                >
+                  Ver mas
+                </Button>
+                <Button
+                  onClick={() => {
+                    onAnyButtonClick();
+                  }}
+                >
+                  Seguir
+                </Button>
+                <Button
+                  onClick={() => {
+                    onAnyButtonClick();
+                  }}
+                >
+                  Adherirme
+                </Button>
+              </article>
+            );
+          })}
+        </aside>
+        <StyledModal
+          isOpen={isOpenSeguidores}
+          onBackgroundClick={toggleModalSeguidores}
+          onEscapeKeydown={toggleModalSeguidores}
+        >
+          <h2>Iniciativa {iniciativaId}</h2>
+          <hr />
+          <div className="cuerpo">
+            <h6>Seguidores</h6>
+          </div>
+          {seguidores.map((seguidor, index) => {
+            return (
+              <div>
+                <li key={index}>{seguidor.correo}</li>
+              </div>
+            );
+          })}
+          <div className="abajo">
+            <Button onClick={toggleModalSeguidores}>Ok, termine</Button>
+          </div>
+        </StyledModal>
+        <StyledModal
+          isOpen={isOpenAdheridos}
+          onBackgroundClick={toggleModalAdheridos}
+          onEscapeKeydown={toggleModalAdheridos}
+        >
+          <h2>Iniciativa {iniciativaId}</h2>
+          <hr />
+          <div className="cuerpo">
+            <h6>Adheridos</h6>
+          </div>
+          {adheridos.map((adherido, index) => {
+            return (
+              <div>
+                <li key={index}>{adherido.correo}</li>
+              </div>
+            );
+          })}
+          <div className="abajo">
+            <Button onClick={toggleModalAdheridos}>Ok, termine</Button>
+          </div>
+        </StyledModal>
+      </ModalProvider>
+      <Footer />
+    </Styles>
+  );
+}
