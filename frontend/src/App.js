@@ -14,7 +14,7 @@ import Invitado from "./pages/invitado/Invitado";
 
 toast.configure();
 export default function App() {
-  const [tipoUser, setTipoUser] = useState("CIUDADANO");
+  const [tipoUser, setTipoUser] = useState("");
   if (getToken() !== null) {
     if (sessionStorage.getItem("facebookLogin") === true) {
       fetchUserRole()
