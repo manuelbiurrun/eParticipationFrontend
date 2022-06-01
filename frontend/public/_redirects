@@ -1,3 +1,4 @@
 # invitado
 
-/ /login
+/      /login
+/login /Login.js
