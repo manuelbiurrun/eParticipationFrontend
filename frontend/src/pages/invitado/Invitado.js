@@ -21,7 +21,7 @@ function Principal() {
   return (
     <Styles>
       <div id="page-container">
-        <>
+        <div>
           <NavigationBar />
           <BrowserRouter>
             <Routes>
@@ -34,7 +34,7 @@ function Principal() {
               </Fragment>
             </Routes>
           </BrowserRouter>
-        </>
+        </div>
         <Footer />
       </div>
     </Styles>

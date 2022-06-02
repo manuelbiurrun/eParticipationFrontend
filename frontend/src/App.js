@@ -20,8 +20,8 @@ export default function App() {
       fetchUserRole()
         .then((response) => {
           console.log("llegue hasta aca facebook!!");
-          /*const rol = fetchUserRole();
-          setTipoUser(rol);*/
+          /* const rol = fetchUserRole();
+          setTipoUser(rol); */
         })
         .catch((error) => {
           clearState();
@@ -30,8 +30,8 @@ export default function App() {
       fetchUserData()
         .then((response) => {
           console.log("llegue hasta aca gubUY!!");
-          /*localStorage.setItem("userID", response.data.correo);
-          setTipoUser(response.data.rol);*/
+          /* localStorage.setItem("userID", response.data.correo);
+          setTipoUser(response.data.rol); */
         })
         .catch((error) => {});
     }
