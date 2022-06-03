@@ -30,7 +30,7 @@ function Comentario({ data }) {
           <div class="container">
             <div class="row">
               <div class="col-md-3">
-                <img src={data.imagen} alt="imagen" width="160" />
+                <img src={data.imagen} alt="imagen" width="80" />
                 <p> {data.correo} </p>
               </div>
               <div id="comment" class="col-md-8">

@@ -1,4 +1,5 @@
 import React from "react";
+import { LoadingLogin } from "../../components/LoadingLogin";
 
 function LoginGubUy() {
   console.log("llego hasta aca, hurraaaaaaay!!");
@@ -9,7 +10,7 @@ function LoginGubUy() {
   //redireccionar a /
   return (
     <>
-      <h1>Estamos autenticando</h1>
+      <LoadingLogin />
     </>
   );
 }

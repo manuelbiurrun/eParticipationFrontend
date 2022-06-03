@@ -79,6 +79,9 @@ const Styles = styled.div`
     margin-top: 10px;
     border-radius: 10px;
   }
+  #todasButton {
+    float: right;
+  }
   Button {
     float: right;
     margin-left: 10px;
@@ -191,6 +194,9 @@ export default function Home() {
               </article>
             );
           })}
+          <Button id="todasButton" variant="danger" href="/iniciativas">
+            Ver mas iniciativas
+          </Button>
         </aside>
         <aside id="derecha">
           {procesos.map((procs) => {
@@ -206,12 +212,9 @@ export default function Home() {
                 </figure>
                 <h6>{procs.fecha}</h6>
                 <h1>{procs.nombre}</h1>
-                <p>{procs.descripcion}</p>
-                <Button
-                  onClick={() => {
-                    onAnyButtonClick();
-                  }}
-                >
+                {/* <p>{procs.descripcion}</p> */}
+                <p>descripcion</p>
+                <Button href={"/proceso?nombre=" + procs.nombre}>
                   Ver mas
                 </Button>
                 <Button
@@ -219,18 +222,14 @@ export default function Home() {
                     onAnyButtonClick();
                   }}
                 >
-                  Seguir
-                </Button>
-                <Button
-                  onClick={() => {
-                    onAnyButtonClick();
-                  }}
-                >
-                  Adherirme
+                  Involucrados
                 </Button>
               </article>
             );
           })}
+          <Button id="todasButton" variant="danger" href="/procesos">
+            Ver mas procesos
+          </Button>
         </aside>
         <StyledModal
           isOpen={isOpenSeguidores}

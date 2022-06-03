@@ -2,19 +2,13 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Footer } from "../../components/Footer";
 import user from "../../datosPrueba/ciudadano";
-//import inis from "../../datosPrueba/iniciativas";
 import Modal, { ModalProvider } from "styled-react-modal";
-import { MdOutlineModeEditOutline } from "react-icons/md";
-import { CgClose } from "react-icons/cg";
 import { AiOutlineStop } from "react-icons/ai";
 import { Noti, NotiError } from "../../components/Notification";
 import { Button } from "react-bootstrap";
-import {
-  getUsuario,
-  deleteIniciativa,
-  updateUsuario,
-} from "../../services/Requests";
-//import { fetchUserID } from "../../services/Requests";
+import { getUsuario, updateUsuario } from "../../services/Requests";
+import { GiMagnifyingGlass } from "react-icons/gi";
+import { fetchUserID } from "../../services/Requests";
 
 const StyledModal = Modal.styled`
   border-radius: 5px;
@@ -144,6 +138,7 @@ const Styles = styled.div`
 `;
 
 export default function Perfil() {
+  const usuario = fetchUserID();
   const [ciudadano, setCiudadano] = useState({
     cedula: "",
     nombreCompleto: "",
@@ -179,12 +174,11 @@ export default function Perfil() {
     setRecurso(data.target.files[0]);
   };
 
-  const [eliminarOpen, isEliminarOpen] = useState();
   const [unfollowOpen, isUnfollowOpen] = useState();
   const [iniciativa, setIniciativa] = useState();
 
   useEffect(() => {
-    getUsuario("colo@gmail")
+    getUsuario(usuario)
       .then((response) => {
         if (response.status === 200) {
           console.log(response.data);
@@ -196,20 +190,14 @@ export default function Perfil() {
       .catch((error) => {
         NotiError(error.response.data);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const eliminarIniciativa = () => {
-    isEliminarOpen(!eliminarOpen);
-  };
 
   const unfollowIniciativa = () => {
     isUnfollowOpen(!unfollowOpen);
   };
 
   const onUnfollow = (ini) => {};
-
-  const onDelete = (ini) => {
-    deleteIniciativa(ini);
-  };
 
   const onGuardar = (e) => {
     e.preventDefault();
@@ -271,23 +259,10 @@ export default function Perfil() {
 
                     <Button
                       className="dirBtn"
-                      href={"/modificariniciativa?nombre=" + ini}
+                      href={"/iniciativa?nombre=" + ini}
                     >
-                      <MdOutlineModeEditOutline
-                        color="#3d3d3d"
-                        fontSize="1.5rem"
-                      />
+                      <GiMagnifyingGlass color="#3d3d3d" fontSize="1.5rem" />
                     </Button>
-                    <button className="dirBtn">
-                      <CgClose
-                        color="#3d3d3d"
-                        fontSize="1.5rem"
-                        onClick={() => {
-                          setIniciativa(iniciativa);
-                          eliminarIniciativa();
-                        }}
-                      />
-                    </button>
                   </div>
                 );
               })}
@@ -414,31 +389,6 @@ export default function Perfil() {
       </div>
       <ModalProvider>
         <StyledModal
-          isOpen={eliminarOpen}
-          onBackgroundClick={eliminarIniciativa}
-          onEscapeKeydown={eliminarIniciativa}
-        >
-          <h4>Eliminar {iniciativa}</h4>
-          <hr />
-          <div className="cuerpo">
-            <h6>Seguro que quieres eliminar la iniciativa {iniciativa}?</h6>
-          </div>
-          <div className="abajo">
-            <Button variant="secondary" onClick={eliminarIniciativa}>
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                onDelete(iniciativa);
-                eliminarIniciativa();
-              }}
-            >
-              Comentar
-            </Button>
-          </div>
-        </StyledModal>
-        <StyledModal
           isOpen={unfollowOpen}
           onBackgroundClick={unfollowIniciativa}
           onEscapeKeydown={unfollowIniciativa}
@@ -461,7 +411,7 @@ export default function Perfil() {
                 unfollowIniciativa();
               }}
             >
-              Comentar
+              Confirmar
             </Button>
           </div>
         </StyledModal>

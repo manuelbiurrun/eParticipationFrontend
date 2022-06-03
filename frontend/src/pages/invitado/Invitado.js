@@ -6,7 +6,7 @@ import Home from "./Home";
 import { Footer } from "../../components/Footer";
 import Iniciativa from "../Iniciativa";
 import Login from "../Login";
-import Iniciativas from "../Iniciativas";
+import Iniciativas from "./Iniciativas";
 import LoginGubUy from "./LoginGubUy";
 
 const Styles = styled.div`

@@ -6,10 +6,14 @@ import Perfil from "./Perfil";
 import CrearIniciativa from "./CrearIniciativa";
 import Iniciativa from "../Iniciativa";
 import Politicas from "./Politicas";
-import Iniciativas from "../Iniciativas";
-import ModificarIniciativa from "./ModificarIniciativa";
+import Iniciativas from "./Iniciativas";
+import LogoutGubUy from "./LogoutGubUy";
+import Proceso from "../Proceso";
+import Procesos from "./Procesos";
 
 export default function Ciudadano() {
+  localStorage.setItem("userRole", "CIUDADANO");
+  localStorage.setItem("userID", "colo@gmail");
   return (
     <>
       <NavigationBar />
@@ -25,12 +29,10 @@ export default function Ciudadano() {
             />
             <Route exact path="/iniciativa" element={<Iniciativa />} />
             <Route exact path="/iniciativas" element={<Iniciativas />} />
+            <Route exact path="/proceso" element={<Proceso />} />
+            <Route exact path="/procesos" element={<Procesos />} />
             <Route exact path="/politicas" element={<Politicas />} />
-            <Route
-              exact
-              path="/modificariniciativa"
-              element={<ModificarIniciativa />}
-            />
+            <Route exact path="/logout" element={<LogoutGubUy />} />
           </Fragment>
         </Routes>
       </BrowserRouter>

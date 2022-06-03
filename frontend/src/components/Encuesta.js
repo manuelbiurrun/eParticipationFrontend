@@ -1,15 +1,19 @@
-import React, { useState } from "react";
-import Poll from "react-polls";
+import React, { useEffect, useState } from "react";
+import Poll from "@gidesan/react-polls";
 
-//en pañales(ahora es igual a la votacion)
-function Encuesta() {
-  const pollQuestion = "Is react-polls useful?";
-  const pollAnswers = [
-    { option: "Yes", votes: 0 },
-    { option: "No", votes: 0 },
-  ];
+function Encuesta({ pregunta, opciones }) {
+  const [pollAnswers, setPollAnswers] = useState([]);
 
-  const [encuesta, setEncuesta] = useState(...pollAnswers);
+  useEffect(() => {
+    setPollAnswers(opciones);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [encuesta, setEncuesta] = useState(opciones);
+
+  const guardarEncuesta = () => {
+    console.log(encuesta);
+  };
 
   const handleVote = (voteAnswer) => {
     const newPollAnswers = encuesta.map((answer) => {
@@ -19,11 +23,12 @@ function Encuesta() {
       return answer;
     });
     setEncuesta(newPollAnswers);
+    guardarEncuesta();
   };
   return (
-    <>
-      <Poll question={pollQuestion} answers={pollAnswers} onVote={handleVote} />
-    </>
+    <div>
+      <Poll question={pregunta} answers={pollAnswers} onVote={handleVote} />
+    </div>
   );
 }
 

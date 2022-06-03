@@ -2,7 +2,7 @@ import React from "react";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import styled from "styled-components";
 import { FaConnectdevelop } from "react-icons/fa";
-import { clearState } from "../../services/Requests";
+import { fetchUserID } from "../../services/Requests";
 
 const Styles = styled.div`
   #container {
@@ -51,6 +51,7 @@ const Styles = styled.div`
 `;
 
 export const NavigationBar = () => {
+  const user = fetchUserID();
   return (
     <Styles>
       <div id="container">
@@ -63,22 +64,14 @@ export const NavigationBar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse>
             <Nav className="items">
-              <NavDropdown
-                align="end"
-                title="porque no haces algo?"
-                menuVariant="color"
-              >
+              <NavDropdown align="end" title={user} menuVariant="color">
                 <NavDropdown.Item href="/perfil">perfil</NavDropdown.Item>
-                <NavDropdown.Item href="/iniciativas">
-                  Ver iniciativas
+                <NavDropdown.Item href="/crearProceso">
+                  Nuevo Proceso
                 </NavDropdown.Item>
+                <NavDropdown.Item href="/probando">Probando</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item
-                  onClick={() => {
-                    clearState();
-                    window.location.replace("/");
-                  }}
-                >
+                <NavDropdown.Item href="/logout">
                   Cerrar sesión
                 </NavDropdown.Item>
               </NavDropdown>

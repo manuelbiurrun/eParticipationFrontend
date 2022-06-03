@@ -1,23 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-//import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Footer } from "../components/Footer";
 import { Layout } from "../components/Layout";
 import { Form } from "react-bootstrap";
-import ini from "../datosPrueba/iniciativa";
+import { fetchUserRole } from "../services/Requests";
 import { FaFacebook } from "react-icons/fa";
-import { BsTwitter, BsWhatsapp } from "react-icons/bs";
+import { BsTwitter } from "react-icons/bs";
+import { HiClipboardCopy } from "react-icons/hi";
 import Comentario from "../components/Comentario";
 import Modal, { ModalProvider } from "styled-react-modal";
-//import { getIniciativa } from "../services/Requests";
-//import { NotiError } from "../components/Notification";
-import { NotiBienvenida, Noti } from "../components/Notification";
+import { getIniciativa, fetchUserID } from "../services/Requests";
+import { NotiBienvenida, Noti, NotiError } from "../components/Notification";
 import { useSearchParams } from "react-router-dom";
 import comentarios from "../datosPrueba/comentarios";
 import ciudadano from "../datosPrueba/ciudadano";
 //import { comentarIniciativa } from "../services/Requests";
-//import { getToken } from "../services/Requests";
 
 const StyledModal = Modal.styled`
   border-radius: 5px;
@@ -56,8 +54,8 @@ const Styles = styled.div`
   #twitterButton {
     background-color: #1aa1d6;
   }
-  #whatsappButton {
-    background-color: #58c554;
+  #copyButton {
+    background-color: #a0a3a8;
   }
   #comentarButton {
     background-color: transparent;
@@ -74,39 +72,38 @@ const Styles = styled.div`
 `;
 
 export default function Iniciativa() {
-  // const [ini, setIniciativa] = useState([]);
-
-  // useEffect(() => {
-  //   getIniciativa(sessionStorage.getItem("idIniciativa"))
-  //     .then((response) => {
-  //       setIniciativa(response.data);
-  //     })
-  //     .catch((error) => {
-  //       NotiError(error.response.data);
-  //     });
-  // }, []);
-
   const [params] = useSearchParams();
   const nombre = params.get("nombre");
   const [isOpen, setIsOpen] = useState(false);
-  //const [comment, setComment] = useState("");
+  const [comment, setComment] = useState("");
 
-  /* const toggleModal = () => {
-    if (getToken() === null) {
+  const [ini, setIniciativa] = useState([]);
+
+  useEffect(() => {
+    getIniciativa(nombre)
+      .then((response) => {
+        console.log(response.data);
+        setIniciativa(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleModal = () => {
+    if (fetchUserID() === "") {
       NotiError("debes estar logueado");
     } else {
       setIsOpen(!isOpen);
     }
-  }; */
-
-  const toggleModal = () => {
-    setIsOpen(!isOpen);
   };
 
   const comentar = () => {
-    //guardar comentario
     //comentarIniciativa(ini.nombre, ciudadano.correo, comment);
+    console.log(comment);
     setIsOpen(!isOpen);
+    Noti("comentario relizado con exito!!");
   };
 
   const compartirTwitter = () => {
@@ -123,8 +120,8 @@ export default function Iniciativa() {
   };
 
   const handleCommentChange = (e) => {
-    //setComment(e.target.value);
-    console.log("falta la funcion");
+    setComment(e.target.value);
+    //console.log("falta la funcion");
   };
 
   return (
@@ -151,17 +148,19 @@ export default function Iniciativa() {
           <Button onClick={compartirFacebook}>
             <FaFacebook />
           </Button>
-          <Button onClick={compartirWpp} id="whatsappButton">
-            <BsWhatsapp />
+          <Button onClick={compartirWpp} id="copyButton">
+            <HiClipboardCopy />
           </Button>
-          <Button
-            id="comentarButton"
-            onClick={() => {
-              toggleModal();
-            }}
-          >
-            Comentar
-          </Button>
+          {fetchUserRole() === "CIUDADANO" ? (
+            <Button
+              id="comentarButton"
+              onClick={() => {
+                toggleModal();
+              }}
+            >
+              Comentar
+            </Button>
+          ) : null}
         </div>
         <div className="comentarios">
           {comentarios.map((com) => {

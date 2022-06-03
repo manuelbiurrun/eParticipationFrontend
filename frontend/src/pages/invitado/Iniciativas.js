@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Footer } from "../components/Footer";
-import { Layout } from "../components/Layout";
+import { Footer } from "../../components/Footer";
+import { Layout } from "../../components/Layout";
 import { Button, ListGroup } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { NotiError } from "../components/Notification";
-import { getIniciativas } from "../services/Requests";
+import { NotiError } from "../../components/Notification";
+import { getIniciativas } from "../../services/Requests";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -36,6 +36,9 @@ const Styles = styled.div`
   }
   input {
     margin-left: 5px;
+  }
+  #verMasButton {
+    float: right;
   }
   #listado::-webkit-scrollbar {
     display: none;
@@ -129,12 +132,17 @@ function Iniciativas() {
                         <div class="col-md-3">
                           <p> {ini.nombre} </p>
                         </div>
-                        <div id="comment" class="col-md-4">
+                        <div id="comment" class="col-md-6">
                           <p>{ini.fecha}</p>
                           <p>{ini.comentario}</p>
                         </div>
-                        <div class="col-md-2">
-                          <Button>ver mas</Button>
+                        <div id="verMasButton" class="col-md-2">
+                          <Button
+                            id="verMasButton"
+                            href={"/iniciativa?nombre=" + ini.nombre}
+                          >
+                            ver mas
+                          </Button>
                         </div>
                       </div>
                     </div>
