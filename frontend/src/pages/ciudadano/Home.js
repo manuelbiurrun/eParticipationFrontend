@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Footer } from "../../components/Footer";
-import { NotiError, NotiBienvenida, Noti } from "../../components/Notification";
+import { NotiError, Noti } from "../../components/Notification";
 import { Button } from "react-bootstrap";
 import Modal, { ModalProvider } from "styled-react-modal";
+import Poll from "@gidesan/react-polls";
 import {
   getIniciativas,
   getProcesos,
   getUsuario,
   ciudadanoSigueIniciativa,
   ciudadanoAdheridoIniciativa,
+  //dejarSeguirAIniciativa,
+  //participarProceso,
+  ciudadanoParticipoProceso,
+  eleccionProcesoCiudadano,
 } from "../../services/Requests";
 import {
   seguirAIniciativa,
@@ -104,13 +109,28 @@ export default function Home() {
     });
   };
   const [unfollowOpen, isUnfollowOpen] = useState();
+  const [participarOpen, isParticiparOpen] = useState();
   const [iniciativa, setIniciativa] = useState();
+  const [proceso, setProceso] = useState();
 
   const unfollow = () => {
     isUnfollowOpen(!unfollowOpen);
   };
 
-  const onUnfollow = (ini) => {};
+  const participar = () => {
+    isParticiparOpen(!participarOpen);
+  };
+
+  const onUnfollow = (ini) => {
+    //dejarSeguirAIniciativa(ini, usuario);
+    console.log(ini);
+  };
+
+  const onParticipar = (option) => {
+    //participarProceso(proceso, usuario, option);
+    console.log(proceso);
+    console.log(option);
+  };
 
   const onAdherirse = (idIniciativa) => {
     adherirAIniciativa(idIniciativa, usuario).then((res) => {
@@ -120,9 +140,6 @@ export default function Home() {
         NotiError("hubo un error inesperado");
       }
     });
-  };
-  const onAnyButtonClick = () => {
-    NotiBienvenida("faltan los botones de los procesos");
   };
 
   const [iniciativas, setIniciativas] = useState([]);
@@ -159,6 +176,15 @@ export default function Home() {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const pollStyles1 = {
+    questionSeparator: true,
+    questionSeparatorWidth: "question",
+    questionBold: true,
+    questionColor: "#303030",
+    align: "center",
+    theme: "blue",
+  };
 
   return (
     <Styles>
@@ -241,7 +267,8 @@ export default function Home() {
               <Button href={"proceso?nombre=" + procs.nombre}>Ver mas</Button>
               <Button
                 onClick={() => {
-                  onAnyButtonClick();
+                  setProceso(procs.nombre);
+                  participar();
                 }}
               >
                 Involucrarme
@@ -278,6 +305,39 @@ export default function Home() {
               }}
             >
               Confirmar
+            </Button>
+          </div>
+        </StyledModal>
+        <StyledModal
+          isOpen={participarOpen}
+          onBackgroundClick={participar}
+          onEscapeKeydown={participar}
+        >
+          <h4>Participar en {proceso}</h4>
+          <hr />
+          <div className="cuerpo">
+            {ciudadanoParticipoProceso(proceso, usuario) ? (
+              <Poll
+                id="poll"
+                question={proceso.pregunta}
+                answers={proceso.opciones}
+                onVote={onParticipar}
+                customStyles={pollStyles1}
+                noStorage
+              />
+            ) : (
+              <h6>ya votaste a {eleccionProcesoCiudadano(proceso, usuario)}</h6>
+            )}
+          </div>
+          <div className="abajo">
+            <Button
+              variant="danger"
+              onClick={() => {
+                onParticipar(proceso);
+                participar();
+              }}
+            >
+              Termine
             </Button>
           </div>
         </StyledModal>

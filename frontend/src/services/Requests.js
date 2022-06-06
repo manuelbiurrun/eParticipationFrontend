@@ -69,6 +69,16 @@ export const getToken = () => {
   return localStorage.getItem("token");
 };
 
+export const getAccessToken = (code) => {
+  console.log(code);
+  //llamada a "https://auth-testing.iduruguay.gub.uy/oidc/v1/token" por soap
+};
+
+export const getUserInfo = (accessToken) => {
+  console.log(accessToken);
+  //llamada a "https://auth-testing.iduruguay.gub.uy/oidc/v1/userinfo" por soap
+};
+
 export const userLogin = () => {
   sessionStorage.setItem("facebookLogin", false);
   //faltan las variables de entorno(.env)
@@ -76,7 +86,7 @@ export const userLogin = () => {
     "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize?" +
     "response_type=code" +
     "&client_id=890192" +
-    "&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2FLoginGubUy" +
+    "&redirect_uri=https%3A%2F%2Fopenidconnect.net%2Fcallback" +
     "&scope=openid%20personal%20email";
   return window.location.replace(authURL);
 };
@@ -111,13 +121,19 @@ export const getProcesos = () => {
   return instance.get("/proceso/listar");
 };
 
-/* export const newProceso = (proceso) => {
+export const newProceso = (proceso) => {
   return instance.post("/procesos/nuevoProceso", proceso);
-}; */
+};
 
 export const seguirAIniciativa = (idIniciativa, correoCiudadano) => {
   return instance.post(
     `/iniciativa/seguir?iniciativa=${idIniciativa}&user=${correoCiudadano}`
+  );
+};
+
+export const dejarSeguirAIniciativa = (idIniciativa, correoCiudadano) => {
+  return instance.post(
+    `/iniciativa/dejarSeguir?iniciativa=${idIniciativa}&user=${correoCiudadano}`
   );
 };
 
@@ -151,5 +167,23 @@ export const ciudadanoSigueIniciativa = (iniciativa, ciudadano) => {
 export const ciudadanoAdheridoIniciativa = (iniciativa, ciudadano) => {
   return instance.get(
     `/usuario/ifAdherido?iniciativa=${iniciativa}&user=${ciudadano}`
+  );
+};
+
+export const ciudadanoParticipoProceso = (proceso, ciudadano) => {
+  return instance.get(
+    `/usuario/ifParticipo?proceso=${proceso}&user=${ciudadano}`
+  );
+};
+
+export const participarProceso = (proceso, ciudadano, option) => {
+  return instance.get(
+    `/usuario/participar?proceso=${proceso}&user=${ciudadano}&option=${option}`
+  );
+};
+
+export const eleccionProcesoCiudadano = (proceso, ciudadano) => {
+  return instance.get(
+    `/usuario/participacion?proceso=${proceso}&user=${ciudadano}`
   );
 };

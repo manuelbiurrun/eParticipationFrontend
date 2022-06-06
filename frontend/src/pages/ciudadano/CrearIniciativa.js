@@ -88,15 +88,16 @@ box-shadow: 7px 13px 37px #000;
 export default function CrearIniciativa() {
   const [params] = useSearchParams();
   const correo = params.get("ciudadano");
+  const [recurso, setRecurso] = useState();
 
   const [iniciativa, setIniciativa] = useState({
     nombre: "",
     descripcion: "",
     fecha: "",
     creador: correo,
+    recurso: recurso, //falta convertir a binario
   });
   // eslint-disable-next-line no-unused-vars
-  const [recurso, setRecurso] = useState();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
 

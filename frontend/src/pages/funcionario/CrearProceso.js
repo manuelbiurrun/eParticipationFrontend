@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Layout } from "../../components/Layout";
 import { Form, Button } from "react-bootstrap";
+import { fetchUserID } from "../../services/Requests";
 
 const Styles = styled.div`
 #page-container {
@@ -55,6 +56,7 @@ const Styles = styled.div`
 `;
 
 function CrearProceso() {
+  const user = fetchUserID();
   return (
     <Styles>
       <Layout>
@@ -62,10 +64,16 @@ function CrearProceso() {
         <section className="form-alta">
           <Form>
             <h3>Elija una forma de recoleccion de datos</h3>
-            <Button id="procesoButton" href="/crearprocesovotacion">
+            <Button
+              id="procesoButton"
+              href={"/crearprocesovotacion?ciudadano=" + user}
+            >
               VOTACION
             </Button>
-            <Button id="procesoButton" href="/crearprocesoencuesta">
+            <Button
+              id="procesoButton"
+              href={"/crearprocesoencuesta?ciudadano=" + user}
+            >
               ENCUESTA
             </Button>
           </Form>

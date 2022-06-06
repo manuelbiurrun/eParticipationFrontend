@@ -25,9 +25,23 @@ function Votacion({ opciones, pregunta }) {
     setVotacion(newPollAnswers);
     guardarVotacion();
   };
+  const pollStyles2 = {
+    questionSeparator: false,
+    questionSeparatorWidth: "question",
+    questionBold: false,
+    questionColor: "#4F70D6",
+    align: "center",
+    theme: "blue",
+  };
   return (
     <div>
-      <Poll question={pregunta} answers={pollAnswers} onVote={handleVote} />
+      <Poll
+        question={pregunta}
+        answers={pollAnswers}
+        onVote={handleVote}
+        customStyles={pollStyles2}
+        noStorage
+      />
     </div>
   );
 }

@@ -6,11 +6,12 @@ import styled from "styled-components";
 import { Form, Button } from "react-bootstrap";
 /*import GoogleLogin from "react-google-login";
 import { FcGoogle } from "react-icons/fc";*/
-import { userLogin, loginExterno } from "../services/Requests";
+import { loginExterno, userLogin } from "../services/Requests";
 import FacebookLogin from "react-facebook-login";
 import { NotiError } from "../components/Notification";
 import { Error } from "../components/Error";
 import Cookie from "js-cookie";
+//import OAuth2Login from "react-simple-oauth2-login";
 
 const Styles = styled.div`
   #page-container {
@@ -90,10 +91,6 @@ const Styles = styled.div`
 function Login() {
   const [error, guardarError] = useState("");
 
-  const handleSubmit = () => {
-    userLogin();
-  };
-
   const handleFacebookClick = () => {
     sessionStorage.setItem("facebookLogin", true);
   };
@@ -126,13 +123,16 @@ function Login() {
       });
   };
 
+  // const onSuccess = (response) => console.log(response);
+  // const onFailure = (response) => console.error(response);
+
   let componente;
   if (error !== "") {
     componente = <Error error={error} />;
   } else {
     componente = null;
   }
-
+  //"https://eparticipationfront.herokuapp.com/LoginGubUy"
   return (
     <Styles>
       <Layout>
@@ -141,9 +141,26 @@ function Login() {
         <section className="form-alta">
           <Form>
             <h4>Inicio de sesión</h4>
-            <Button id="gubuy" onClick={() => handleSubmit()}>
+            <Button
+              id="gubuy"
+              onClick={() => {
+                userLogin();
+              }}
+            >
               LOGIN WITH GUB.UY
             </Button>
+            {/* <OAuth2Login
+              id="gubuy"
+              authorizationUrl="https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize"
+              isCrossOrigin={true}
+              extraParams={{ scope: "openid%20personal%20email" }}
+              responseType="token"
+              clientId="890192"
+              redirectUri="https%3A%2F%2Flocalhost%3A8080"
+              onSuccess={onSuccess}
+              onFailure={onFailure}
+              buttonText="LOGIN WITH GUB.UY"
+            /> */}
             <FacebookLogin
               appId="417728810194551"
               autoLoad={false}
