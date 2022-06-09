@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Footer } from "../../components/Footer";
-import { NotiBienvenida, NotiError } from "../../components/Notification";
+import { NotiError } from "../../components/Notification";
 import { Button } from "react-bootstrap";
 /* import ciudadano from "../../datosPrueba/ciudadano";
 import iniciativas from "../../datosPrueba/iniciativas";
@@ -93,9 +93,6 @@ const Styles = styled.div`
 
 export default function Home() {
   const usuario = fetchUserID();
-  const onAnyButtonClick = () => {
-    NotiBienvenida("por favor, iniciar sesion");
-  };
 
   const [iniciativas, setIniciativas] = useState([]);
   const [procesos, setProcesos] = useState([]);
@@ -117,7 +114,7 @@ export default function Home() {
       });
     getProcesos()
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         setProcesos(response.data);
       })
       .catch((error) => {
@@ -134,10 +131,17 @@ export default function Home() {
   }, []);
 
   const [iniciativaId, setIniciativaId] = useState();
+  const [procesoId, setProcesoId] = useState();
   const [seguidores, setSeguidores] = useState([]);
   const [adheridos, setAdheridos] = useState([]);
+  const [participantes, setParticipantes] = useState([]);
   const [isOpenSeguidores, setIsOpenSeguidores] = useState(false);
   const [isOpenAdheridos, setIsOpenAdheridos] = useState(false);
+  const [isOpenParticipantes, setIsOpenParticipantes] = useState(false);
+
+  const toggleModalParticipantes = () => {
+    setIsOpenParticipantes(!isOpenParticipantes);
+  };
 
   const toggleModalSeguidores = () => {
     setIsOpenSeguidores(!isOpenSeguidores);
@@ -185,7 +189,7 @@ export default function Home() {
                   id="adButton"
                   onClick={() => {
                     setIniciativaId(ini.nombre);
-                    setAdheridos(ini.adheridos);
+                    setAdheridos(ini.participantes);
                     toggleModalAdheridos();
                   }}
                 >
@@ -219,7 +223,9 @@ export default function Home() {
                 </Button>
                 <Button
                   onClick={() => {
-                    onAnyButtonClick();
+                    setProcesoId(procs.nombre);
+                    setParticipantes(procs.participantes);
+                    toggleModalParticipantes();
                   }}
                 >
                   Involucrados
@@ -241,13 +247,13 @@ export default function Home() {
           <div className="cuerpo">
             <h6>Seguidores</h6>
           </div>
-          {seguidores.map((seguidor, index) => {
+          {seguidores === [] ? seguidores.map((seguidor, index) => {
             return (
               <div>
-                <li key={index}>{seguidor.correo}</li>
+                <li key={index}>{seguidor}</li>
               </div>
             );
-          })}
+          }): <h4>Esta iniciativa no tiene seguidores</h4>}
           <div className="abajo">
             <Button onClick={toggleModalSeguidores}>Ok, termine</Button>
           </div>
@@ -262,15 +268,36 @@ export default function Home() {
           <div className="cuerpo">
             <h6>Adheridos</h6>
           </div>
-          {adheridos.map((adherido, index) => {
+          {adheridos === [] ? adheridos.map((adherido, index) => {
             return (
               <div>
-                <li key={index}>{adherido.correo}</li>
+                <li key={index}>{adherido}</li>
               </div>
             );
-          })}
+          }) : <h4>Esta iniciativa no tiene adheridos</h4>}
           <div className="abajo">
             <Button onClick={toggleModalAdheridos}>Ok, termine</Button>
+          </div>
+        </StyledModal>
+        <StyledModal
+          isOpen={isOpenParticipantes}
+          onBackgroundClick={toggleModalParticipantes}
+          onEscapeKeydown={toggleModalParticipantes}
+        >
+          <h2>Proceso {procesoId}</h2>
+          <hr />
+          <div className="cuerpo">
+            <h6>participantes</h6>
+          </div>
+          {participantes === [] ? participantes.map((participante, index) => {
+            return (
+              <div>
+                <li key={index}>{participante}</li>
+              </div>
+            );
+          }): <h4>Esta iniciativa no tiene participantes</h4>}
+          <div className="abajo">
+            <Button onClick={toggleModalParticipantes}>Ok, termine</Button>
           </div>
         </StyledModal>
       </ModalProvider>

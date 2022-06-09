@@ -8,7 +8,7 @@ import Iniciativas from "./Iniciativas";
 import CrearProceso from "./CrearProceso";
 import CrearProcesoEncuesta from "./CrearProcesoEncuesta";
 import CrearProcesoVotacion from "./CrearProcesoVotacion";
-import LogoutGubUy from "./LogoutGubUy";
+import LogoutGubUy from "../LogoutGubUy";
 import ModificarIniciativa from "./ModificarIniciativa";
 import Proceso from "../Proceso";
 import Procesos from "./Procesos";

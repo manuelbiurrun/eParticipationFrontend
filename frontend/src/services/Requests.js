@@ -1,15 +1,34 @@
 import axios from "axios";
 
+//https://eparticipation.me/backend-web/eParticipation
+//http://node2394-eparticipation.web.elasticloud.uy/backend-web/
 // Crear base de Axios "instance"
 const instance = axios.create({
   baseURL:
-    "http://node2394-eparticipation.web.elasticloud.uy/backend-web/eParticipation",
+    "http://localhost:8080/backend-web/eParticipation",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 /*
+instance.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers["Authorization"] = "Bearer " + token;
+      const refreshToken = getRefreshToken();
+      if (refreshToken) {
+        config.headers["RefreshAuthentication"] = "Bearer " + refreshToken;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 instance.interceptors.response.use(
   (response) => {
     return response;
@@ -58,6 +77,10 @@ export const fetchUserRole = () => {
 
 export const fetchUserID = () => {
   return localStorage.getItem("userID");
+};
+
+export const fetchUserCI = () => {
+  return localStorage.getItem("userCI");
 };
 
 export const fetchUserData = () => {
@@ -110,7 +133,8 @@ export const updateIniciativa = (iniciativa) => {
 };
 
 export const deleteIniciativa = (iniciativa) => {
-  return instance.delete(`/iniciativa/modificar?iniciativa=${iniciativa}`);
+  console.log(iniciativa);
+  return instance.delete(`/iniciativa/baja`, iniciativa);
 };
 
 export const getIniciativa = (nombreIniciativa) => {
@@ -122,7 +146,7 @@ export const getProcesos = () => {
 };
 
 export const newProceso = (proceso) => {
-  return instance.post("/procesos/nuevoProceso", proceso);
+  return instance.post("/procesos/alta", proceso);
 };
 
 export const seguirAIniciativa = (idIniciativa, correoCiudadano) => {
@@ -156,7 +180,7 @@ export const getUsuario = (nombreCiudadano) => {
 
 export const updateUsuario = (datos) => {
   return instance.put("/usuario/modificar", datos);
-};
+};//dividir en updateCiudadano y updateFuncionario
 
 export const ciudadanoSigueIniciativa = (iniciativa, ciudadano) => {
   return instance.get(
@@ -172,13 +196,18 @@ export const ciudadanoAdheridoIniciativa = (iniciativa, ciudadano) => {
 
 export const ciudadanoParticipoProceso = (proceso, ciudadano) => {
   return instance.get(
-    `/usuario/ifParticipo?proceso=${proceso}&user=${ciudadano}`
+    `/usuario/ifParticipaP?proceso=${proceso}&user=${ciudadano}`
   );
 };
 
-export const participarProceso = (proceso, ciudadano, option) => {
+/* export const participarProceso = (proceso, ciudadano, option) => {
   return instance.get(
     `/usuario/participar?proceso=${proceso}&user=${ciudadano}&option=${option}`
+  );
+}; */
+export const participarProceso = (proceso, ciudadano) => {
+  return instance.get(
+    `/usuario/participar?proceso=${proceso}&user=${ciudadano}`
   );
 };
 

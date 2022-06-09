@@ -11,10 +11,10 @@ import {
   getUsuario,
   ciudadanoSigueIniciativa,
   ciudadanoAdheridoIniciativa,
-  //dejarSeguirAIniciativa,
+  dejarSeguirAIniciativa,
   //participarProceso,
   ciudadanoParticipoProceso,
-  eleccionProcesoCiudadano,
+  //eleccionProcesoCiudadano,
 } from "../../services/Requests";
 import {
   seguirAIniciativa,
@@ -111,7 +111,15 @@ export default function Home() {
   const [unfollowOpen, isUnfollowOpen] = useState();
   const [participarOpen, isParticiparOpen] = useState();
   const [iniciativa, setIniciativa] = useState();
-  const [proceso, setProceso] = useState();
+  const [proceso, setProceso] = useState({
+    id: "",
+    nombre: "",
+    descripcion: "",
+    fecha: "",
+    estado: "",
+    pregunta: "",
+    opciones: [],
+  });
 
   const unfollow = () => {
     isUnfollowOpen(!unfollowOpen);
@@ -122,14 +130,24 @@ export default function Home() {
   };
 
   const onUnfollow = (ini) => {
-    //dejarSeguirAIniciativa(ini, usuario);
-    console.log(ini);
+    dejarSeguirAIniciativa(ini, usuario).then((res) => {console.log(res)});
   };
 
-  const onParticipar = (option) => {
+  const onParticipar = (opcion) => {
     //participarProceso(proceso, usuario, option);
+    const newAnswers = proceso.opciones.map((answer) => {
+      if (answer.option === opcion) {
+        answer.votes++;
+      }
+      return answer;
+    });
+    setProceso((proceso) => ({
+      ...proceso,
+      opciones: newAnswers,
+    }));
+    //modificarProceso(proceso) --> para actualizar las votaciones
     console.log(proceso);
-    console.log(option);
+    console.log(opcion);
   };
 
   const onAdherirse = (idIniciativa) => {
@@ -249,9 +267,9 @@ export default function Home() {
         </Button>
       </aside>
       <aside id="derecha">
-        {procesos.map((procs) => {
+        {procesos.map((proc) => {
           return (
-            <article key={procs.nombre}>
+            <article key={proc.id}>
               <figure>
                 <img
                   src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
@@ -260,14 +278,14 @@ export default function Home() {
                   height="115"
                 />
               </figure>
-              <h6>{procs.fecha}</h6>
-              <h1>{procs.nombre}</h1>
+              <h6>{proc.fecha}</h6>
+              <h1>{proc.nombre}</h1>
               {/* <p>{procs.descripcion}</p> */}
               <p>descripcion</p>
-              <Button href={"proceso?nombre=" + procs.nombre}>Ver mas</Button>
+              <Button href={"proceso?nombre=" + proc.nombre}>Ver mas</Button>
               <Button
                 onClick={() => {
-                  setProceso(procs.nombre);
+                  setProceso(proc);
                   participar();
                 }}
               >
@@ -313,7 +331,7 @@ export default function Home() {
           onBackgroundClick={participar}
           onEscapeKeydown={participar}
         >
-          <h4>Participar en {proceso}</h4>
+          <h4>Participar en {proceso.nombre}</h4>
           <hr />
           <div className="cuerpo">
             {ciudadanoParticipoProceso(proceso, usuario) ? (
@@ -326,7 +344,7 @@ export default function Home() {
                 noStorage
               />
             ) : (
-              <h6>ya votaste a {eleccionProcesoCiudadano(proceso, usuario)}</h6>
+              <h6>ya votaste</h6>
             )}
           </div>
           <div className="abajo">

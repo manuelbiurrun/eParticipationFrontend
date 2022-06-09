@@ -5,6 +5,13 @@ const procs = [
     descripcion: "descripcion proceso 0",
     fecha: "14/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
   {
     id: "1",
@@ -12,6 +19,13 @@ const procs = [
     descripcion: "descripcion proceso 1",
     fecha: "13/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
   {
     id: "2",
@@ -19,6 +33,13 @@ const procs = [
     descripcion: "descripcion proceso 2",
     fecha: "13/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
   {
     id: "3",
@@ -26,6 +47,13 @@ const procs = [
     descripcion: "descripcion proceso 3",
     fecha: "13/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
   {
     id: "4",
@@ -33,6 +61,13 @@ const procs = [
     descripcion: "descripcion proceso 4",
     fecha: "13/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
   {
     id: "5",
@@ -40,6 +75,13 @@ const procs = [
     descripcion: "descripcion proceso 5",
     fecha: "13/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
   {
     id: "6",
@@ -47,6 +89,13 @@ const procs = [
     descripcion: "descripcion proceso 6",
     fecha: "13/05/2022",
     estado: "Aceptado",
+    pregunta: "cual es el mejor framework?",
+    opciones: [
+      { option: "ReactJS", votes: 0 },
+      { option: "Angular", votes: 0 },
+      { option: "EmberJS", votes: 0 },
+      { option: "Vue", votes: 0 },
+    ],
   },
 ];
 

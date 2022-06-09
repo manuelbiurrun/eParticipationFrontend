@@ -97,7 +97,8 @@ export default function CrearIniciativa() {
     fecha: "",
     pregunta: "",
     creador: correo,
-    instrumento: encuesta,
+    instrumento: "encuesta",
+    contenidoInstrumento: encuesta,
   });
   // eslint-disable-next-line no-unused-vars
 

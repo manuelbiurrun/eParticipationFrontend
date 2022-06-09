@@ -8,11 +8,17 @@ const Styles = styled.div``;
 function Probando() {
   //luego de crear el proceso hay que guardar las opciones en mongo
   const [opcionesEncuesta] = useState([
-    { option: "React", votes: 0 },
-    { option: "Angular", votes: 0 },
-    { option: "Ember", votes: 0 },
-    { option: "Vue", votes: 0 },
+    { option:"React",votes:0},
+    { option:"Angular",votes:0},
+    { option:"Ember",votes:0},
+    { option:"Vue",votes:0},
   ]);
+  /* const [opcionesAux] = useState([]);
+  for(let i = 0; i < opcionesEncuesta.length; i++) {
+    opcionesAux.push(JSON.stringify(opcionesEncuesta[i]));
+  }
+  console.log(opcionesAux); */
+  console.log(opcionesEncuesta);
   const [opcionesVotacion] = useState([
     { option: "Si", votes: 0 },
     { option: "No", votes: 0 },

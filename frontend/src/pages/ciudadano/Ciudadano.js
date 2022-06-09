@@ -7,7 +7,7 @@ import CrearIniciativa from "./CrearIniciativa";
 import Iniciativa from "../Iniciativa";
 import Politicas from "./Politicas";
 import Iniciativas from "./Iniciativas";
-import LogoutGubUy from "./LogoutGubUy";
+import LogoutGubUy from "../LogoutGubUy";
 import Proceso from "../Proceso";
 import Procesos from "./Procesos";
 

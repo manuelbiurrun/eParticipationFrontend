@@ -102,7 +102,6 @@ function Login() {
           localStorage.setItem("token", Cookie.get("authorization"));
           localStorage.setItem("userID", res.data.correo);
           localStorage.setItem("userRole", res.data.rol);
-          Cookie.remove("authorization");
           window.location.replace("/");
         } else {
           NotiError("hubo un error inesperado");
