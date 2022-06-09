@@ -5,7 +5,7 @@ import axios from "axios";
 // Crear base de Axios "instance"
 const instance = axios.create({
   baseURL:
-    "http://localhost:8080/backend-web/eParticipation",
+    "https://179.31.2.65/backend-web/eParticipation",
   headers: {
     "Content-Type": "application/json",
   },
