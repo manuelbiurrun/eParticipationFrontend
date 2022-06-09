@@ -5,7 +5,7 @@ import axios from "axios";
 // Crear base de Axios "instance"
 const instance = axios.create({
   baseURL:
-    "https://179.31.2.65/backend-web/eParticipation",
+    "https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
     "Content-Type": "application/json",
   },

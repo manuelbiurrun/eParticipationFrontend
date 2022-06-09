@@ -1,13 +1,12 @@
-//import React, { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Footer } from "../../components/Footer";
 import { Button } from "react-bootstrap";
-/* import { NotiBienvenida, NotiError } from "../../components/Notification";
-import { getIniciativas, getProcesos } from "../../services/Requests"; */
+import { NotiError } from "../../components/Notification";
+import { getIniciativas, getProcesos } from "../../services/Requests";
 import { NotiBienvenida } from "../../components/Notification";
-import iniciativas from "../../datosPrueba/iniciativas";
-import procesos from "../../datosPrueba/procesos";
+/*import iniciativas from "../../datosPrueba/iniciativas";
+import procesos from "../../datosPrueba/procesos";*/
 
 const Styles = styled.div`
   h1 {
@@ -62,14 +61,14 @@ const Styles = styled.div`
 `;
 
 function PaginaPrincipal() {
-  /* const [iniciativas, setIniciativas] = useState([]);
+  const [iniciativas, setIniciativas] = useState([]);
   const [procesos, setProcesos] = useState([]);
 
   useEffect(() => {
     getIniciativas()
       .then((response) => {
-        const inis = response.data.slice(0, 5);
-        setIniciativas(inis);
+        console.log(response.data);
+        setIniciativas(response.data);
       })
       .catch((error) => {
         NotiError(error.response.data);
@@ -83,7 +82,7 @@ function PaginaPrincipal() {
         NotiError(error.response.data);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); */
+  }, []);
 
   const onVerMas = () => {
     NotiBienvenida("...esto no anda!");
