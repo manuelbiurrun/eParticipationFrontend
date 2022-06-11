@@ -116,6 +116,7 @@ export default function CrearIniciativa() {
   const handleSubmitEncuesta = () => {
     const op = document.getElementById("instrumento").value;
     opciones.push(op);
+    //falta darle el formato correspondiente y agregar los votes:0
     document.getElementById("instrumento").value = "";
   };
 

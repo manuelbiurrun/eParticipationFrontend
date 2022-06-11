@@ -111,14 +111,16 @@ export default function Home() {
   const [unfollowOpen, isUnfollowOpen] = useState();
   const [participarOpen, isParticiparOpen] = useState();
   const [iniciativa, setIniciativa] = useState();
+  const [pregunta, setPregunta] = useState();
+  const [opciones, setOpciones] = useState([]);
   const [proceso, setProceso] = useState({
     id: "",
     nombre: "",
     descripcion: "",
     fecha: "",
     estado: "",
-    pregunta: "",
-    opciones: [],
+    instrumento: "",
+    contenidoInstrumento: [],
   });
 
   const unfollow = () => {
@@ -170,6 +172,29 @@ export default function Home() {
     nacionalidad: "",
   });
 
+  const sacarPregunta = () => {
+      const pregunta = proceso.contenidoInstrumento[proceso.contenidoInstrumento.length - 1];
+      setPregunta(pregunta);
+  }
+
+  const obtenerOpcion = (content) => {
+    const array = content.split(",");//array[0] es la option y array[1] es el votes
+    const valueOption = array[0].split(":")[1];
+    const valueVotes = array[1].split(":")[1];
+    return {"option": valueOption, "votes": valueVotes};    
+  }
+
+  const sacarOpciones = () => {
+    let jsonOpciones = [];
+    const contenido = proceso.contenidoInstrumento;
+    for(let i = 0; i < contenido.length-1; i++) {
+      const opcion = obtenerOpcion(contenido[i]);
+      jsonOpciones.push(opcion);
+    }
+    setOpciones(jsonOpciones);
+    console.log(opciones);
+  }
+
   useEffect(() => {
     getIniciativas()
       .then((response) => {
@@ -180,6 +205,7 @@ export default function Home() {
       });
     getProcesos()
       .then((response) => {
+        console.log(response.data);
         setProcesos(response.data);
       })
       .catch((error) => {
@@ -280,12 +306,13 @@ export default function Home() {
               </figure>
               <h6>{proc.fecha}</h6>
               <h1>{proc.nombre}</h1>
-              {/* <p>{procs.descripcion}</p> */}
-              <p>descripcion</p>
+              <p>{proc.descripcion}</p>
               <Button href={"proceso?nombre=" + proc.nombre}>Ver mas</Button>
               <Button
                 onClick={() => {
                   setProceso(proc);
+                  sacarPregunta();
+                  sacarOpciones();
                   participar();
                 }}
               >
@@ -337,8 +364,8 @@ export default function Home() {
             {ciudadanoParticipoProceso(proceso, usuario) ? (
               <Poll
                 id="poll"
-                question={proceso.pregunta}
-                answers={proceso.opciones}
+                question={pregunta}
+                answers={opciones}
                 onVote={onParticipar}
                 customStyles={pollStyles1}
                 noStorage
@@ -351,7 +378,6 @@ export default function Home() {
             <Button
               variant="danger"
               onClick={() => {
-                onParticipar(proceso);
                 participar();
               }}
             >
