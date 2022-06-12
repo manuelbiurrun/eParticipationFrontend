@@ -118,7 +118,7 @@ export const userLogin = () => {
     "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize?" +
     "response_type=code" +
     "&client_id=890192" +
-    "&redirect_uri=https%3A%2F%2Fopenidconnect.net%2Fcallback" +
+    "&redirect_uri=https%3A%2F%2Feparticipationfront.herokuapp.com%2FloginGubUy" +
     "&scope=openid%20personal%20email";
   return window.location.replace(authURL);
 };
