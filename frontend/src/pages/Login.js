@@ -161,7 +161,7 @@ function Login() {
               buttonText="LOGIN WITH GUB.UY"
             /> */}
             <FacebookLogin
-              appId="417728810194551"
+              appId={process.env.APP_ID}
               autoLoad={false}
               fields="name,email,picture"
               onClick={handleFacebookClick}

@@ -101,24 +101,14 @@ export const getToken = () => {
   return localStorage.getItem("token");
 };
 
-export const getAccessToken = (code) => {
-  console.log(code);
-  //llamada a "https://auth-testing.iduruguay.gub.uy/oidc/v1/token" por soap
-};
-
-export const getUserInfo = (accessToken) => {
-  console.log(accessToken);
-  //llamada a "https://auth-testing.iduruguay.gub.uy/oidc/v1/userinfo" por soap
-};
-
 export const userLogin = () => {
   sessionStorage.setItem("facebookLogin", false);
   //faltan las variables de entorno(.env)
   const authURL =
     "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize?" +
     "response_type=code" +
-    "&client_id=890192" +
-    "&redirect_uri=https%3A%2F%2Feparticipationfront.herokuapp.com%2FloginGubUy" +
+    "&client_id=" + process.env.CLIENT_ID +
+    "&redirect_uri=" + process.env.REDIRECT_URI +
     "&scope=openid%20personal%20email";
   return window.location.replace(authURL);
 };
