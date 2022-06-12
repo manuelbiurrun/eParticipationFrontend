@@ -8,7 +8,7 @@ const instance = axios.create({
   baseURL:
     "https://cors-anywhere.herokuapp.com/https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
-    'origin':'https://eparticipation.web.elasticloud.uy/backend-web/eParticipation', 
+    'origin':'https://eparticipation.web.elasticloud.uy/backend-web/eParticipation, x-requested-with',
   },
 });
 
