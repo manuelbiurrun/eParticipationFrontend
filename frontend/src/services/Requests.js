@@ -4,21 +4,21 @@ import axios from "axios";
 //http://node2394-eparticipation.web.elasticloud.uy/backend-web/
 
 // Crear base de Axios "instance"
-/* const instance = axios.create({
+const instance = axios.create({
   baseURL:
     "https://cors-anywhere.herokuapp.com/https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
     'origin':'https://eparticipation.web.elasticloud.uy/backend-web/eParticipation', 
   },
-}); */
+});
 
-const instance = axios.create({
+/* const instance = axios.create({
   baseURL:
     "https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
     'Content-Type': 'application/json', 
   },
-});
+}); */
 
 /*
 instance.interceptors.request.use(
