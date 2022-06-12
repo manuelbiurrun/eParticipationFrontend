@@ -6,9 +6,9 @@ import axios from "axios";
 // Crear base de Axios "instance"
 const instance = axios.create({
   baseURL:
-    "https://cors-anywhere.herokuapp.com/https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
+    "https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
-    'origin':'https://eparticipation.web.elasticloud.uy/backend-web/eParticipation, x-requested-with',
+    'Content-Type': 'application/json',
   },
 });
 
