@@ -201,14 +201,15 @@ export default function Home() {
         setIniciativas(response.data);
       })
       .catch((error) => {
+        console.log(error.response.data);
         NotiError(error.response.data);
       });
     getProcesos()
       .then((response) => {
-        console.log(response.data);
         setProcesos(response.data);
       })
       .catch((error) => {
+        console.log(error.response.data);
         NotiError(error.response.data);
       });
     getUsuario(usuario)
@@ -216,6 +217,7 @@ export default function Home() {
         setCiudadano(response.data);
       })
       .catch((error) => {
+        console.log(error.response.data);
         NotiError(error.response.data);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
