@@ -6,12 +6,10 @@ import axios from "axios";
 // Crear base de Axios "instance"
 const instance = axios.create({
   baseURL:
-    "https://eparticipation.web.elasticloud.uy/eParticipation",
+    "https://cors-anywhere.herokuapp.com/https://eparticipation.web.elasticloud.uy/eParticipation",
   headers: {
-    "Content-Type": "application/json",
-    'Access-Control-Allow-Origin': '*',
-    'origin':'x-requested-with',
-    'Access-Control-Allow-Headers': 'POST, GET, PUT, DELETE, OPTIONS, HEAD, Authorization, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Access-Control-Allow-Origin',  },
+    'origin':'https://eparticipation.web.elasticloud.uy/eParticipation', 
+  },
 });
 
 /*
