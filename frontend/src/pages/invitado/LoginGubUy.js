@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { Base64 } from "js-base64";
 import { LoadingLogin } from "../../components/LoadingLogin";
 import { useSearchParams } from "react-router-dom";
 
@@ -9,7 +10,7 @@ function LoginGubUy() {
   const code = params.get("code");
 
     const plainCredentials = process.env.CLIENT_ID + ":" + process.env.CLIENT_SECRET;
-    const base64Credentials = Base64.getEncoder().encode(plainCredentials.getBytes());
+    const base64Credentials = Base64.encode(plainCredentials.getBytes());
     const authorizationHeader = "Basic " + base64Credentials;
 
     const tokenURL = axios.create({
