@@ -22,6 +22,8 @@ function LoginGubUy() {
         "https://auth-testing.iduruguay.gub.uy",
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
         'Authorization': authorizationHeader,
       },
     });
@@ -35,7 +37,8 @@ function LoginGubUy() {
     tokenURL.post("/oidc/v1/token", bodyFormData).then((response) => {
       console.log(response.data.access_token);
       //llamada a "https://auth-testing.iduruguay.gub.uy/oidc/v1/userinfo"
-    });
+    })
+    .catch((error) => {console.log(error.data)});
 
   return (
     <>
