@@ -9,7 +9,7 @@ function LoginGubUy() {
   const [params] = useSearchParams();
   const code = params.get("code");
 
-    const plainCredentials = process.env.CLIENT_ID + ":" + process.env.CLIENT_SECRET;
+    const plainCredentials = "890192" + ":" + "457d52f181bf11804a3365b49ae4d29a2e03bbabe74997a2f510b179";
     const base64Credentials = Base64.encode(plainCredentials.getBytes());
     const authorizationHeader = "Basic " + base64Credentials;
 
@@ -25,7 +25,7 @@ function LoginGubUy() {
     let bodyFormData = new FormData();
     bodyFormData.append('grant_type', 'authorization_code');
     bodyFormData.append('code', code);
-    bodyFormData.append('redirect_uri', process.env.REDIRECT_URI);
+    bodyFormData.append('redirect_uri', "https%3A%2F%2Feparticipationfront.herokuapp.com%2FloginGubUy");
     bodyFormData.append('state', 'info');
 
     tokenURL.post("/oidc/v1/token", bodyFormData).then((response) => {
