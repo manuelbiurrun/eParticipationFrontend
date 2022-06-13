@@ -10,7 +10,11 @@ function LoginGubUy() {
   const code = params.get("code");
 
     const plainCredentials = "890192" + ":" + "457d52f181bf11804a3365b49ae4d29a2e03bbabe74997a2f510b179";
-    const base64Credentials = Base64.encode(plainCredentials.getBytes());
+    var bytes = [];
+    for (var i = 0; i < plainCredentials.length; i++) {
+      bytes.push(plainCredentials.charCodeAt(i));
+    }
+    const base64Credentials = Base64.encode(bytes);
     const authorizationHeader = "Basic " + base64Credentials;
 
     const tokenURL = axios.create({
