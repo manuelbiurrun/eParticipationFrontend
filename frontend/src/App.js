@@ -4,6 +4,7 @@ import Funcionario from "./pages/funcionario/Funcionario";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Loading } from "./components/Loading";
 import { toast } from "react-toastify";
+
 import {
   getToken,
   fetchUserRole,
@@ -14,7 +15,7 @@ import Invitado from "./pages/invitado/Invitado";
 
 toast.configure();
 export default function App() {
-  const [tipoUser, setTipoUser] = useState("");
+  const [tipoUser, setTipoUser] = useState("CIUDADANO");
   if (getToken() !== null) {
     if (sessionStorage.getItem("facebookLogin") === true) {
       fetchUserRole()
@@ -24,6 +25,7 @@ export default function App() {
           setTipoUser(rol); */
         })
         .catch((error) => {
+          console.log(error.data);
           clearState();
         });
     } else {
@@ -33,7 +35,7 @@ export default function App() {
           /* localStorage.setItem("userID", response.data.correo);
           setTipoUser(response.data.rol); */
         })
-        .catch((error) => {});
+        .catch((error) => {console.log(error.data)});
     }
   } else if (tipoUser === "") {
     setTipoUser("INVITADO");

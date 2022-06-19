@@ -5,7 +5,7 @@ import { Layout } from "../../components/Layout";
 import { Button, ListGroup } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { NotiError } from "../../components/Notification";
-import { getIniciativas } from "../../services/Requests";
+import { getIniciativas, getIniciativa, getIniciativasRango } from "../../services/Requests";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -52,7 +52,7 @@ function Iniciativas() {
   const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
-    getIniciativas(nombre, startDate, endDate)
+    getIniciativas()
       .then((response) => {
         setData(response.data);
       })
@@ -70,6 +70,36 @@ function Iniciativas() {
     }));
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if(nombre.nombre !== "") {
+      setData([]);
+      getIniciativa(nombre.nombre).then((response) => {
+        if(response.data === "Dato null") {
+          NotiError("iniciativa no existe");
+        } else {
+          let newData = [];
+          newData.push(response.data);
+          setData(newData);
+        }
+      })
+      .catch((error) => {console.log(error.data)});
+    } else if(nombre.nombre === "" && startDate === null && endDate === null) {
+      getIniciativas()
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    } else {
+      getIniciativasRango(startDate, endDate).then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {console.log(error.data)});
+    }
+  }
+
   const onChangeDate = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -83,7 +113,7 @@ function Iniciativas() {
   return (
     <Styles>
       <Layout>
-        <div id="buscador">
+        <form onSubmit={handleSubmit} id="buscador">
           <div class="row align-items-center">
             <div class="col-md-4">
               <label htmlFor="nombre">Nombre</label>
@@ -105,6 +135,7 @@ function Iniciativas() {
                 selectsRange
                 dateFormat="yyyy-MM-dd"
                 placeholderText="Fechas Entrega"
+                disabled={nombre.nombre !== ""}
               />
             </div>
             <div class="col-md-3">
@@ -113,14 +144,13 @@ function Iniciativas() {
               </Button>
             </div>
             <div class="col-md-2">
-              <Button variant="secondary">Buscar</Button>
+              <Button type="submit" variant="secondary">Buscar</Button>
             </div>
           </div>
-        </div>
+        </form>
         <div id="listado">
-          {data !== null &&
+          {data !== [] &&
             data.map((ini) => {
-              //falta retocar
               return (
                 <ListGroup class="pb-5">
                   <ListGroup.Item

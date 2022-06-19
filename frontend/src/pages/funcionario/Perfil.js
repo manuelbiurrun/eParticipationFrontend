@@ -198,7 +198,11 @@ export default function Perfil() {
   };
 
   const onDelete = (ini) => {
-    deleteIniciativa(ini);
+    deleteIniciativa(ini).then(() => {
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+    });
   };
 
   const onGuardar = (e) => {
@@ -389,7 +393,7 @@ export default function Perfil() {
                 eliminarProceso();
               }}
             >
-              Comentar
+              Eliminar
             </Button>
           </div>
         </StyledModal>

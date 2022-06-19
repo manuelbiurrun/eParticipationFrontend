@@ -30,6 +30,7 @@
     "react-scripts": "5.0.1",
     "react-simple-oauth2-login": "^0.5.3",
     "react-toastify": "^8.0.3",
+    "react-twitter-embed": "^4.0.4",
     "styled-components": "^5.3.5",
     "styled-react-modal": "^3.0.0",
     "web-vitals": "^2.1.4"

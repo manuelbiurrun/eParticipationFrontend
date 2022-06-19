@@ -8,6 +8,8 @@ import Iniciativa from "../Iniciativa";
 import Login from "../Login";
 import Iniciativas from "./Iniciativas";
 import LoginGubUy from "./LoginGubUy";
+import Proceso from "../Proceso";
+import Procesos from "./Procesos";
 
 const Styles = styled.div`
   #page-container {
@@ -27,6 +29,8 @@ function Principal() {
             <Routes>
               <Fragment>
                 <Route exact path="/" element={<Home />} />
+                <Route exact path="/proceso" element={<Proceso />} />
+                <Route exact path="/procesos" element={<Procesos />} />
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/loginGubUy" element={<LoginGubUy />} />
                 <Route exact path="/iniciativa" element={<Iniciativa />} />

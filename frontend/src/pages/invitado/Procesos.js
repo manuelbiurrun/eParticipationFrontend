@@ -54,6 +54,7 @@ function Procesos() {
   useEffect(() => {
     getProcesos(nombre, startDate, endDate)
       .then((response) => {
+        console.log(response.data);
         setData(response.data);
       })
       .catch((error) => {
@@ -68,12 +69,6 @@ function Procesos() {
       ...nombre,
       [e.target.name]: e.target.value,
     }));
-  };
-
-  const onChangeDate = (dates) => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
   };
 
   const handleSubmit = (e) => {
@@ -107,90 +102,88 @@ function Procesos() {
     }
   }
 
+  const onChangeDate = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+  };
+
   const onClearDate = () => {
     setStartDate(null);
     setEndDate(null);
   };
   return (
     <Styles>
-      <Layout>
-        <form onSubmit={handleSubmit} id="buscador">
-          <div class="row align-items-center">
-            <div class="col-md-4">
-              <label htmlFor="nombre">Nombre</label>
-              <input
-                onChange={handleChange}
-                name="nombre"
-                id="nombre"
-                type="text"
-              />
+        <Layout>
+          <form onSubmit={handleSubmit} id="buscador">
+            <div class="row align-items-center">
+              <div class="col-md-4">
+                <label htmlFor="nombre">Nombre</label>
+                <input
+                  onChange={handleChange}
+                  name="nombre"
+                  id="nombre"
+                  type="text"
+                />
+              </div>
+              <div class="col-md-3">
+                <DatePicker
+                  id="fechas"
+                  name="fechas"
+                  selected={startDate}
+                  onChange={onChangeDate}
+                  startDate={startDate}
+                  endDate={endDate}
+                  selectsRange
+                  dateFormat="yyyy-MM-dd"
+                  placeholderText="Fechas Entrega"
+                  disabled={nombre.nombre !== ""}
+                />
+              </div>
+              <div class="col-md-3">
+                <Button onClick={() => onClearDate()} variant="danger">
+                  clear date
+                </Button>
+              </div>
+              <div class="col-md-2">
+                <Button type="submit" variant="secondary">Buscar</Button>
+              </div>
             </div>
-            <div class="col-md-3">
-              <DatePicker
-                id="fechas"
-                name="fechas"
-                selected={startDate}
-                onChange={onChangeDate}
-                startDate={startDate}
-                endDate={endDate}
-                selectsRange
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Fechas Entrega"
-              />
-            </div>
-            <div class="col-md-3">
-              <Button onClick={() => onClearDate()} variant="danger">
-                clear date
-              </Button>
-            </div>
-            <div class="col-md-2">
-              <Button type="submit" variant="secondary">Buscar</Button>
-            </div>
-          </div>
-        </form>
-        <div id="listado">
-          {data !== null &&
-            data.map((proc) => {
-              //falta retocar
-              return (
-                <ListGroup class="pb-5">
-                  <ListGroup.Item
-                    id="item"
-                    class="d-flex justify-content-between align-items-center mb-3"
-                  >
-                    <div class="container">
-                      <div class="row">
-                        <div class="col-md-3">
-                          <p> {proc.nombre} </p>
-                        </div>
-                        <div id="comment" class="col-md-4">
-                          <p>{proc.fecha}</p>
-                          <p>{proc.comentario}</p>
-                        </div>
-                        <div id="verMasButton" class="col-md-2">
-                          <Button
-                            id="verMasButton"
-                            href={"/proceso?nombre=" + proc.nombre}
-                          >
-                            ver mas
-                          </Button>
-                        </div>
-                        <div id="verMasButton" class="col-md-2">
-                          <Button
-                            id="verMasButton"
-                            href={"/participarProceso?nombre= " + proc.nombre} //todavia no se como hacer esto
-                          >
-                            involucrarme
-                          </Button>
+          </form>
+          <div id="listado">
+            {data !== null &&
+              data.map((proc) => {
+                return (
+                  <ListGroup class="pb-5">
+                    <ListGroup.Item
+                      id="item"
+                      class="d-flex justify-content-between align-items-center mb-3"
+                    >
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-3">
+                            <p> {proc.nombre} </p>
+                          </div>
+                          <div id="comment" class="col-md-4">
+                            <p>{proc.fecha}</p>
+                            <p>{proc.comentario}</p>
+                          </div>
+                          <div id="verMasButton" class="col-md-2">
+                            <Button
+                              id="verMasButton"
+                              href={"/proceso?nombre=" + proc.nombre}
+                            >
+                              ver mas
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </ListGroup.Item>
-                </ListGroup>
-              );
-            })}
-        </div>
-      </Layout>
+                    </ListGroup.Item>
+                  </ListGroup>
+                );
+              })}
+          </div>
+        </Layout>
       <Footer />
     </Styles>
   );

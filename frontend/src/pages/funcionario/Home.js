@@ -107,6 +107,7 @@ export default function Home() {
   useEffect(() => {
     getIniciativas()
       .then((response) => {
+        console.log(response.data);
         setIniciativas(response.data);
       })
       .catch((error) => {
@@ -114,7 +115,6 @@ export default function Home() {
       });
     getProcesos()
       .then((response) => {
-        console.log(response.data);
         setProcesos(response.data);
       })
       .catch((error) => {
@@ -163,7 +163,7 @@ export default function Home() {
               <article key={ini.nombre}>
                 <figure>
                   <img
-                    src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
+                    src={ini.recurso}
                     alt="The Pulpit Rock"
                     width="160"
                     height="115"
@@ -180,6 +180,7 @@ export default function Home() {
                   onClick={() => {
                     setIniciativaId(ini.nombre);
                     setSeguidores(ini.seguidores);
+                    console.log(ini.seguidores);
                     toggleModalSeguidores();
                   }}
                 >
@@ -189,7 +190,7 @@ export default function Home() {
                   id="adButton"
                   onClick={() => {
                     setIniciativaId(ini.nombre);
-                    setAdheridos(ini.participantes);
+                    setAdheridos(ini.adheridos);
                     toggleModalAdheridos();
                   }}
                 >
@@ -206,14 +207,6 @@ export default function Home() {
           {procesos.map((procs) => {
             return (
               <article key={procs.nombre}>
-                <figure>
-                  <img
-                    src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
-                    alt="The Pulpit Rock"
-                    width="160"
-                    height="115"
-                  />
-                </figure>
                 <h6>{procs.fecha}</h6>
                 <h1>{procs.nombre}</h1>
                 {/* <p>{procs.descripcion}</p> */}
@@ -228,7 +221,7 @@ export default function Home() {
                     toggleModalParticipantes();
                   }}
                 >
-                  Involucrados
+                  Participantes
                 </Button>
               </article>
             );
@@ -247,7 +240,7 @@ export default function Home() {
           <div className="cuerpo">
             <h6>Seguidores</h6>
           </div>
-          {seguidores === [] ? seguidores.map((seguidor, index) => {
+          {seguidores.length !== 0 ? seguidores.map((seguidor, index) => {
             return (
               <div>
                 <li key={index}>{seguidor}</li>
@@ -268,7 +261,7 @@ export default function Home() {
           <div className="cuerpo">
             <h6>Adheridos</h6>
           </div>
-          {adheridos === [] ? adheridos.map((adherido, index) => {
+          {adheridos.length !== 0 ? adheridos.map((adherido, index) => {
             return (
               <div>
                 <li key={index}>{adherido}</li>

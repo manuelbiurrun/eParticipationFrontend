@@ -6,7 +6,7 @@ import Modal, { ModalProvider } from "styled-react-modal";
 import { AiOutlineStop } from "react-icons/ai";
 import { Noti, NotiError } from "../../components/Notification";
 import { Button } from "react-bootstrap";
-import { getUsuario, updateUsuario } from "../../services/Requests";
+import { getUsuario, updateUsuario, dejarSeguirAIniciativa } from "../../services/Requests";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { fetchUserID } from "../../services/Requests";
 
@@ -196,8 +196,15 @@ export default function Perfil() {
   const unfollowIniciativa = () => {
     isUnfollowOpen(!unfollowOpen);
   };
-
-  const onUnfollow = (ini) => {};
+  const onUnfollow = () => {
+    dejarSeguirAIniciativa(iniciativa, usuario)
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err.data);
+      });
+  };
 
   const onGuardar = (e) => {
     e.preventDefault();

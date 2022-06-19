@@ -5,7 +5,7 @@ import { Layout } from "../../components/Layout";
 import { Button, ListGroup } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { NotiError } from "../../components/Notification";
-import { getIniciativas, deleteIniciativa } from "../../services/Requests";
+import { getIniciativas, deleteIniciativa, getIniciativasRango, getIniciativa } from "../../services/Requests";
 import Modal, { ModalProvider } from "styled-react-modal";
 import { MdOutlineModeEditOutline } from "react-icons/md";
 import { CgClose } from "react-icons/cg";
@@ -126,6 +126,36 @@ function Iniciativas() {
     setEndDate(end);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if(nombre.nombre !== "") {
+      setData([]);
+      getIniciativa(nombre.nombre).then((response) => {
+        if(response.data === "Dato null") {
+          NotiError("iniciativa no existe");
+        } else {
+          let newData = [];
+          newData.push(response.data);
+          setData(newData);
+        }
+      })
+      .catch((error) => {console.log(error.data)});
+    } else if(nombre.nombre === "" && startDate === null && endDate === null) {
+      getIniciativas()
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    } else {
+      getIniciativasRango(startDate, endDate).then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {console.log(error.data)});
+    }
+  }
+
   const onClearDate = () => {
     setStartDate(null);
     setEndDate(null);
@@ -134,7 +164,7 @@ function Iniciativas() {
     <Styles>
       <ModalProvider>
         <Layout>
-          <div id="buscador">
+          <form onSubmit={handleSubmit} id="buscador">
             <div class="row align-items-center">
               <div class="col-md-4">
                 <label htmlFor="nombre">Nombre</label>
@@ -164,10 +194,10 @@ function Iniciativas() {
                 </Button>
               </div>
               <div class="col-md-2">
-                <Button variant="secondary">Buscar</Button>
+                <Button type="submit" variant="secondary">Buscar</Button>
               </div>
             </div>
-          </div>
+          </form>
           <div id="listado">
             {data !== null &&
               data.map((ini) => {
@@ -248,13 +278,13 @@ function Iniciativas() {
           <div className="cuerpo">
             <h6>Seguidores</h6>
           </div>
-          {seguidores.map((seguidor, index) => {
+          {seguidores.length !== 0 ? seguidores.map((seguidor, index) => {
             return (
               <div>
-                <li key={index}>{seguidor.correo}</li>
+                <li key={index}>{seguidor}</li>
               </div>
             );
-          })}
+          }): <h4>esta iniciativa no tiene seguidores</h4>}
           <div className="abajo">
             <Button onClick={toggleModalSeguidores}>Ok, termine</Button>
           </div>
@@ -269,13 +299,13 @@ function Iniciativas() {
           <div className="cuerpo">
             <h6>Adheridos</h6>
           </div>
-          {adheridos.map((adherido, index) => {
+          {adheridos.length !== 0 ? adheridos.map((adherido, index) => {
             return (
               <div>
-                <li key={index}>{adherido.correo}</li>
+                <li key={index}>{adherido}</li>
               </div>
             );
-          })}
+          }): <h4>esta iniciativa no tiene adheridos</h4>}
           <div className="abajo">
             <Button onClick={toggleModalAdheridos}>Ok, termine</Button>
           </div>

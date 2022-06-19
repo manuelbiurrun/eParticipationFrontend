@@ -4,7 +4,6 @@ import { Footer } from "../../components/Footer";
 import { Button } from "react-bootstrap";
 import { NotiError } from "../../components/Notification";
 import { getIniciativas, getProcesos } from "../../services/Requests";
-import { NotiBienvenida } from "../../components/Notification";
 /*import iniciativas from "../../datosPrueba/iniciativas";
 import procesos from "../../datosPrueba/procesos";*/
 
@@ -51,7 +50,7 @@ const Styles = styled.div`
     margin-top: 10px;
     border-radius: 10px;
   }
-  Button {
+  #vertodos {
     float: right;
     margin-left: 10px;
   }
@@ -84,10 +83,6 @@ function PaginaPrincipal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onVerMas = () => {
-    NotiBienvenida("...esto no anda!");
-  };
-
   return (
     <Styles>
       <nav>
@@ -112,7 +107,7 @@ function PaginaPrincipal() {
             </article>
           );
         })}
-        <Button variant="danger" href="/iniciativas">
+        <Button id="verTodos" variant="danger" href="/iniciativas">
           Ver mas iniciativas
         </Button>
       </aside>
@@ -132,15 +127,16 @@ function PaginaPrincipal() {
               <h1>{proc.nombre}</h1>
               <p>{proc.descripcion}</p>
               <Button
-                onClick={() => {
-                  onVerMas();
-                }}
+              href={"proceso?nombre=" + proc.nombre}
               >
                 Ver mas
               </Button>
             </article>
           );
         })}
+        <Button id="verTodos" variant="danger" href="/procesos">
+          Ver mas procesos
+        </Button>
       </aside>
       <Footer />
     </Styles>

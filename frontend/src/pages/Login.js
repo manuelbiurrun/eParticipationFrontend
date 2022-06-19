@@ -4,14 +4,11 @@ import { Layout } from "../components/Layout";
 import { NavigationBar } from "./invitado/NavBar";
 import styled from "styled-components";
 import { Form, Button } from "react-bootstrap";
-/*import GoogleLogin from "react-google-login";
-import { FcGoogle } from "react-icons/fc";*/
 import { loginExterno, userLogin } from "../services/Requests";
 import FacebookLogin from "react-facebook-login";
 import { NotiError } from "../components/Notification";
 import { Error } from "../components/Error";
 import Cookie from "js-cookie";
-//import OAuth2Login from "react-simple-oauth2-login";
 
 const Styles = styled.div`
   #page-container {
@@ -122,16 +119,13 @@ function Login() {
       });
   };
 
-  // const onSuccess = (response) => console.log(response);
-  // const onFailure = (response) => console.error(response);
-
   let componente;
   if (error !== "") {
     componente = <Error error={error} />;
   } else {
     componente = null;
   }
-  //"https://eparticipationfront.herokuapp.com/LoginGubUy"
+
   return (
     <Styles>
       <Layout>
@@ -148,18 +142,6 @@ function Login() {
             >
               LOGIN WITH GUB.UY
             </Button>
-            {/* <OAuth2Login
-              id="gubuy"
-              authorizationUrl="https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize"
-              isCrossOrigin={true}
-              extraParams={{ scope: "openid%20personal%20email" }}
-              responseType="token"
-              clientId="890192"
-              redirectUri="https%3A%2F%2Flocalhost%3A8080"
-              onSuccess={onSuccess}
-              onFailure={onFailure}
-              buttonText="LOGIN WITH GUB.UY"
-            /> */}
             <FacebookLogin
               appId={process.env.APP_ID}
               autoLoad={false}

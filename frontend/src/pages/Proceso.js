@@ -5,16 +5,14 @@ import { Footer } from "../components/Footer";
 import { Layout } from "../components/Layout";
 import { Form } from "react-bootstrap";
 import { fetchUserRole } from "../services/Requests";
-import { FaFacebook } from "react-icons/fa";
-import { BsTwitter } from "react-icons/bs";
-import { HiClipboardCopy } from "react-icons/hi";
 import Comentario from "../components/Comentario";
 import Modal, { ModalProvider } from "styled-react-modal";
-import { getIniciativa, fetchUserID } from "../services/Requests";
-import { NotiBienvenida, Noti, NotiError } from "../components/Notification";
+import { getProceso, fetchUserID } from "../services/Requests";
+import { Noti, NotiError } from "../components/Notification";
 import { useSearchParams } from "react-router-dom";
 import comentarios from "../datosPrueba/comentarios";
 import ciudadano from "../datosPrueba/ciudadano";
+import { TwitterShareButton} from 'react-twitter-embed';
 //import { comentarIniciativa } from "../services/Requests";
 
 const StyledModal = Modal.styled`
@@ -76,19 +74,50 @@ export default function Proceso() {
   const nombre = params.get("nombre");
   const [isOpen, setIsOpen] = useState(false);
   const [comment, setComment] = useState("");
+  const [opciones] = useState([]);
+  const [pregunta, setPregunta] = useState("");
 
-  const [proc, setProceso] = useState([]);
+  const [proc, setProceso] = useState({
+    nombre: "",
+    fecha: "",
+    instrumento: "",
+    contenidoInstrumento: [],
+    alcance: "",
+    fase: "",
+  });
+
+  const sacarPregunta = (res) => {
+    const p = res.contenidoInstrumento[res.contenidoInstrumento.length - 1];
+    setPregunta(p);
+  }
+
+  const obtenerOpcion = (content) => {
+    const array = content.split(",");//array[0] es la option y array[1] es el votes
+    const valueOption = array[0].split(":")[1];
+    const valueVotes = array[1].split(":")[1];
+    return {"option": valueOption, "votes": valueVotes};   
+  }
+
+  const sacarOpciones = (res) => {
+    const contenido = res.contenidoInstrumento;
+    for(let i = 0; i < contenido.length-1; i++) {
+      const opcion = obtenerOpcion(contenido[i]);
+      opciones.push(opcion);
+    }
+    sacarPregunta(res);
+  }
 
   useEffect(() => {
-    getIniciativa(nombre)
+    getProceso(nombre)
       .then((response) => {
-        console.log(response.data);
+        if(opciones.length === 0) {
+          sacarOpciones(response.data);
+        }
         setProceso(response.data);
       })
       .catch((error) => {
-        NotiError(error.response.data);
+        NotiError(error.data);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleModal = () => {
@@ -106,19 +135,6 @@ export default function Proceso() {
     Noti("comentario relizado con exito!!");
   };
 
-  const compartirTwitter = () => {
-    NotiBienvenida("compartir Twitter");
-  };
-
-  const compartirFacebook = () => {
-    NotiBienvenida("Compartir Facebook");
-  };
-
-  const copiarClipboard = () => {
-    navigator.clipboard.writeText(window.location.href);
-    Noti("URL compiada con exito!!");
-  };
-
   const handleCommentChange = (e) => {
     setComment(e.target.value);
     //console.log("falta la funcion");
@@ -131,22 +147,17 @@ export default function Proceso() {
         <nav align="center">
           <h1>{nombre}</h1>
         </nav>
-        {/* <p align="center">{proc.descripcion}</p> */}
-        <p align="center">descripcion</p>
-        <h1>
-          aca va a ir el resultado parcial de la encuesta o la votacion(mongo)
-        </h1>
+        <h3 align="center">{pregunta}</h3>
+        {opciones.map((op, index) => {
+          return(
+            <div key={index}>
+              <h6 align="center">{op.option} | {op.votes}</h6>
+            </div>
+          );
+        })}
         <div>
           <h6>Compartir:</h6>
-          <Button onClick={compartirTwitter} id="twitterButton">
-            <BsTwitter />
-          </Button>
-          <Button onClick={compartirFacebook}>
-            <FaFacebook />
-          </Button>
-          <Button onClick={copiarClipboard} id="copyButton">
-            <HiClipboardCopy />
-          </Button>
+          <TwitterShareButton />
           {fetchUserRole() === "CIUDADANO" ? (
             <Button
               id="comentarButton"

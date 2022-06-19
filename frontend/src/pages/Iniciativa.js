@@ -5,16 +5,15 @@ import { Footer } from "../components/Footer";
 import { Layout } from "../components/Layout";
 import { Form } from "react-bootstrap";
 import { fetchUserRole } from "../services/Requests";
-import { FaFacebook } from "react-icons/fa";
-import { BsTwitter } from "react-icons/bs";
 import { HiClipboardCopy } from "react-icons/hi";
 import Comentario from "../components/Comentario";
 import Modal, { ModalProvider } from "styled-react-modal";
 import { getIniciativa, fetchUserID } from "../services/Requests";
-import { NotiBienvenida, Noti, NotiError } from "../components/Notification";
+import { Noti, NotiError } from "../components/Notification";
 import { useSearchParams } from "react-router-dom";
 import comentarios from "../datosPrueba/comentarios";
 import ciudadano from "../datosPrueba/ciudadano";
+import { TwitterShareButton} from 'react-twitter-embed';
 //import { comentarIniciativa } from "../services/Requests";
 
 const StyledModal = Modal.styled`
@@ -50,12 +49,6 @@ const Styles = styled.div`
   Button {
     margin-bottom: 5px;
     margin-right: 20px;
-  }
-  #twitterButton {
-    background-color: #1aa1d6;
-  }
-  #copyButton {
-    background-color: #a0a3a8;
   }
   #comentarButton {
     background-color: transparent;
@@ -106,14 +99,6 @@ export default function Iniciativa() {
     Noti("comentario relizado con exito!!");
   };
 
-  const compartirTwitter = () => {
-    NotiBienvenida("compartir Twitter");
-  };
-
-  const compartirFacebook = () => {
-    NotiBienvenida("Compartir Facebook");
-  };
-
   const compartirWpp = () => {
     navigator.clipboard.writeText(window.location.href);
     Noti("URL compiada con exito!!");
@@ -134,7 +119,7 @@ export default function Iniciativa() {
         <p align="center">{ini.descripcion}</p>
         <figure id="imagen" align="center">
           <img
-            src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
+            src={ini.recurso}
             alt="imagen"
             width="160"
             height="115"
@@ -142,15 +127,10 @@ export default function Iniciativa() {
         </figure>
         <div>
           <h6>Compartir:</h6>
-          <Button onClick={compartirTwitter} id="twitterButton">
-            <BsTwitter />
-          </Button>
-          <Button onClick={compartirFacebook}>
-            <FaFacebook />
-          </Button>
-          <Button onClick={compartirWpp} id="copyButton">
-            <HiClipboardCopy />
-          </Button>
+          <br />
+          <TwitterShareButton 
+            url={window.location.href}
+          />
           {fetchUserRole() === "CIUDADANO" ? (
             <Button
               id="comentarButton"
@@ -160,7 +140,10 @@ export default function Iniciativa() {
             >
               Comentar
             </Button>
-          ) : null}
+          ) : 
+            <Button onClick={compartirWpp} id="comentarButton">
+              <HiClipboardCopy />
+            </Button>}
         </div>
         <div className="comentarios">
           {comentarios.map((com) => {

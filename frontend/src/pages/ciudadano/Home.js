@@ -8,13 +8,13 @@ import Poll from "@gidesan/react-polls";
 import {
   getIniciativas,
   getProcesos,
+  updateProceso,
   getUsuario,
-  ciudadanoSigueIniciativa,
   ciudadanoAdheridoIniciativa,
-  dejarSeguirAIniciativa,
-  //participarProceso,
+  participarProceso,
   ciudadanoParticipoProceso,
-  //eleccionProcesoCiudadano,
+  eleccionProcesoCiudadano,
+  ciudadanoSigueIniciativa,
 } from "../../services/Requests";
 import {
   seguirAIniciativa,
@@ -99,18 +99,31 @@ const Styles = styled.div`
 
 export default function Home() {
   const usuario = fetchUserID();
-  const onSeguir = (idIniciativa) => {
-    seguirAIniciativa(idIniciativa, usuario).then((res) => {
-      if (res.status === 200) {
-        Noti("Estas siguiendo a la iniciativa " + idIniciativa);
+  const [iniciativa] = useState({nombre: ""});
+  const onSeguir = () => {
+    ciudadanoSigueIniciativa(iniciativa.nombre, ciudadano.correo).then((response) => {
+      console.log(response.data);
+      if(response.data === false) {
+        seguirAIniciativa(iniciativa.nombre, ciudadano.correo).then((res) => {
+          if (res.status === 200) {
+            Noti("Estas siguiendo a la iniciativa " + iniciativa.nombre);
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+          } else {
+            NotiError("hubo un error inesperado");
+          }
+        })
       } else {
-        NotiError("hubo un error inesperado");
+        NotiError("ya seguis a esta iniciativa papa");
       }
-    });
+    })
+  .catch((error) => {
+    console.log(error.data)
+  });
   };
-  const [unfollowOpen, isUnfollowOpen] = useState();
+
   const [participarOpen, isParticiparOpen] = useState();
-  const [iniciativa, setIniciativa] = useState();
   const [pregunta, setPregunta] = useState();
   const [opciones, setOpciones] = useState([]);
   const [proceso, setProceso] = useState({
@@ -123,43 +136,55 @@ export default function Home() {
     contenidoInstrumento: [],
   });
 
-  const unfollow = () => {
-    isUnfollowOpen(!unfollowOpen);
-  };
-
   const participar = () => {
     isParticiparOpen(!participarOpen);
   };
 
-  const onUnfollow = (ini) => {
-    dejarSeguirAIniciativa(ini, usuario).then((res) => {console.log(res)});
-  };
+  const formatearRespuesta = (res) => {
+    let retorno = [];
+    for(let i = 0; i < res.length; i++) {
+      const opcion = obtenerOpcionRetorno(res[i]);
+      retorno.push(opcion);
+    }
+    return retorno;
+  }
+
+  const obtenerOpcionRetorno = (content) => {
+    console.log(content);
+    const valueOption = content.option;
+    const valueVotes = content.votes;
+    return "option:" + valueOption + ",votes:" + valueVotes;
+  }
 
   const onParticipar = (opcion) => {
-    //participarProceso(proceso, usuario, option);
-    const newAnswers = proceso.opciones.map((answer) => {
+    const newAnswers = opciones.map((answer) => {
       if (answer.option === opcion) {
         answer.votes++;
       }
       return answer;
     });
-    setProceso((proceso) => ({
-      ...proceso,
-      opciones: newAnswers,
-    }));
-    //modificarProceso(proceso) --> para actualizar las votaciones
-    console.log(proceso);
-    console.log(opcion);
+    participarProceso(proceso.nombre, ciudadano.correo, []);//[tipoInstrumento, pregunta, option]
+    proceso.contenidoInstrumento = formatearRespuesta(newAnswers);
+    updateProceso(proceso);
   };
 
-  const onAdherirse = (idIniciativa) => {
-    adherirAIniciativa(idIniciativa, usuario).then((res) => {
-      if (res.status === 200) {
-        Noti("Estas siguiendo a la iniciativa " + idIniciativa);
+  const onAdherirse = () => {
+    ciudadanoAdheridoIniciativa(iniciativa.nombre, ciudadano.correo).then((response) => {
+      if(response.data === false) {
+        adherirAIniciativa(iniciativa.nombre, ciudadano.correo).then((res) => {
+          if (res.status === 200) {
+            Noti("Estas adherido a la iniciativa " + iniciativa.nombre);
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+          } else {
+            NotiError("hubo un error inesperado");
+          }
+        });
       } else {
-        NotiError("hubo un error inesperado");
+        NotiError("ya estas adherido a esta iniciativa");
       }
-    });
+    }).catch((error) => {console.log(error.data);});
   };
 
   const [iniciativas, setIniciativas] = useState([]);
@@ -172,8 +197,8 @@ export default function Home() {
     nacionalidad: "",
   });
 
-  const sacarPregunta = () => {
-      const pregunta = proceso.contenidoInstrumento[proceso.contenidoInstrumento.length - 1];
+  const sacarPregunta = (p) => {
+      const pregunta = p.contenidoInstrumento[p.contenidoInstrumento.length - 1];
       setPregunta(pregunta);
   }
 
@@ -184,15 +209,13 @@ export default function Home() {
     return {"option": valueOption, "votes": valueVotes};    
   }
 
-  const sacarOpciones = () => {
-    let jsonOpciones = [];
-    const contenido = proceso.contenidoInstrumento;
+  const sacarOpciones = (pr) => {
+    const contenido = pr.contenidoInstrumento;
     for(let i = 0; i < contenido.length-1; i++) {
       const opcion = obtenerOpcion(contenido[i]);
-      jsonOpciones.push(opcion);
+      opciones.push(opcion);
     }
-    setOpciones(jsonOpciones);
-    console.log(opciones);
+    sacarPregunta(pr);
   }
 
   useEffect(() => {
@@ -206,6 +229,7 @@ export default function Home() {
       });
     getProcesos()
       .then((response) => {
+        console.log(response.data);
         setProcesos(response.data);
       })
       .catch((error) => {
@@ -238,12 +262,12 @@ export default function Home() {
         <h1 align="center">Bienvenido {ciudadano.nombre}!!</h1>
       </nav>
       <aside id="izquierda">
-        {iniciativas.map((ini) => {
+        {iniciativas.map((ini, index) => {
           return (
-            <article key={ini.nombre}>
+            <article key={index}>
               <figure>
                 <img
-                  src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
+                  src={ini.recurso}
                   alt="The Pulpit Rock"
                   width="160"
                   height="115"
@@ -253,39 +277,23 @@ export default function Home() {
               <h1>{ini.nombre}</h1>
               <p>{ini.descripcion}</p>
               <Button href={"/iniciativa?nombre=" + ini.nombre}>Ver mas</Button>
-              {ciudadanoSigueIniciativa(ini.nombre, ciudadano.correo) ? (
-                <Button
-                  id="botonSeguir"
-                  onClick={() => {
-                    setIniciativa(ini.nombre);
-                    unfollow(ini.nombre);
-                  }}
-                >
-                  Dejar de seguir
-                </Button>
-              ) : (
-                <Button
-                  id="botonSeguir"
-                  onClick={() => {
-                    onSeguir(ini.nombre);
-                  }}
-                >
-                  Seguir
-                </Button>
-              )}
+              <Button
+              id="botonSeguir"
+              onClick={() => {
+                iniciativa.nombre = ini.nombre;
+                onSeguir();
+              }}
+              >
+                Seguir
+              </Button>
               <Button
                 id="adButton"
                 onClick={() => {
-                  onAdherirse(ini.nombre);
+                  iniciativa.nombre = ini.nombre;
+                  onAdherirse();
                 }}
-                disabled={ciudadanoAdheridoIniciativa(
-                  ini.nombre,
-                  ciudadano.correo
-                )}
               >
-                {ciudadanoAdheridoIniciativa(ini.nombre, ciudadano.correo)
-                  ? "Adherido"
-                  : "Adherirse"}
+                Adherirse
               </Button>
             </article>
           );
@@ -298,27 +306,22 @@ export default function Home() {
         {procesos.map((proc) => {
           return (
             <article key={proc.id}>
-              <figure>
-                <img
-                  src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
-                  alt="The Pulpit Rock"
-                  width="160"
-                  height="115"
-                />
-              </figure>
               <h6>{proc.fecha}</h6>
               <h1>{proc.nombre}</h1>
-              <p>{proc.descripcion}</p>
+              {/* <p>{proc.descripcion}</p> */}
+              <p>descripcion</p>
               <Button href={"proceso?nombre=" + proc.nombre}>Ver mas</Button>
               <Button
                 onClick={() => {
                   setProceso(proc);
-                  sacarPregunta();
-                  sacarOpciones();
+                  if(opciones.length !== 0) {
+                    setOpciones([]);
+                  }
+                  sacarOpciones(proc);
                   participar();
                 }}
               >
-                Involucrarme
+                Participar
               </Button>
             </article>
           );
@@ -328,33 +331,6 @@ export default function Home() {
         </Button>
       </aside>
       <ModalProvider>
-        <StyledModal
-          isOpen={unfollowOpen}
-          onBackgroundClick={unfollow}
-          onEscapeKeydown={unfollow}
-        >
-          <h4>Dejar de seguir {iniciativa}</h4>
-          <hr />
-          <div className="cuerpo">
-            <h6>
-              Seguro que quieres dejar de seguir la iniciativa {iniciativa}?
-            </h6>
-          </div>
-          <div className="abajo">
-            <Button variant="secondary" onClick={unfollow}>
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                onUnfollow(iniciativa);
-                unfollow();
-              }}
-            >
-              Confirmar
-            </Button>
-          </div>
-        </StyledModal>
         <StyledModal
           isOpen={participarOpen}
           onBackgroundClick={participar}
@@ -373,7 +349,7 @@ export default function Home() {
                 noStorage
               />
             ) : (
-              <h6>ya votaste</h6>
+              <h6>ya votaste {eleccionProcesoCiudadano}</h6>
             )}
           </div>
           <div className="abajo">

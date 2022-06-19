@@ -5,9 +5,10 @@ import { Layout } from "../../components/Layout";
 import { Button, ListGroup } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { NotiError, Noti } from "../../components/Notification";
-import Modal, { ModalProvider } from "styled-react-modal";
 import {
   getIniciativas,
+  getIniciativasRango,
+  getIniciativa,
   ciudadanoSigueIniciativa,
   ciudadanoAdheridoIniciativa,
   adherirAIniciativa,
@@ -17,26 +18,6 @@ import {
 } from "../../services/Requests";
 
 import "react-datepicker/dist/react-datepicker.css";
-
-const StyledModal = Modal.styled`
-  border-radius: 5px;
-  padding: 1.5%;
-  width: 25%;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  overflow-y:inherit !important;
-
-  .cuerpo{
-    margin-bottom: 15px;
-  }
-  .abajo{
-    text-align: right;
-  }
-  Button {
-    margin-left: 5px;
-  }
-`;
 
 const Styles = styled.div`
   #buscador {
@@ -91,37 +72,53 @@ function Iniciativas() {
     nacionalidad: "",
   });
 
-  const onSeguir = (idIniciativa) => {
-    seguirAIniciativa(idIniciativa, usuario).then((res) => {
-      if (res.status === 200) {
-        Noti("Estas siguiendo a la iniciativa " + idIniciativa);
+  const [iniciativa] = useState({nombre: ""});
+  const onSeguir = () => {
+    ciudadanoSigueIniciativa(iniciativa.nombre, ciudadano.correo).then((response) => {
+      console.log(response.data);
+      if(response.data === false) {
+        seguirAIniciativa(iniciativa.nombre, ciudadano.correo).then((res) => {
+          if (res.status === 200) {
+            Noti("Estas siguiendo a la iniciativa " + iniciativa.nombre);
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+          } else {
+            NotiError("hubo un error inesperado");
+          }
+        })
       } else {
-        NotiError("hubo un error inesperado");
+        NotiError("ya seguis a esta iniciativa papa");
       }
-    });
+    })
+  .catch((error) => {
+    console.log(error.data)
+  });
   };
-  const onAdherirse = (idIniciativa) => {
-    adherirAIniciativa(idIniciativa, usuario).then((res) => {
-      if (res.status === 200) {
-        Noti("Estas siguiendo a la iniciativa " + idIniciativa);
+
+  const onAdherirse = () => {
+    ciudadanoAdheridoIniciativa(iniciativa.nombre, ciudadano.correo).then((response) => {
+      if(response.data === false) {
+        adherirAIniciativa(iniciativa.nombre, ciudadano.correo).then((res) => {
+          if (res.status === 200) {
+            Noti("Estas adherido a la iniciativa " + iniciativa.nombre);
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+          } else {
+            NotiError("hubo un error inesperado");
+          }
+        });
       } else {
-        NotiError("hubo un error inesperado");
+        NotiError("ya estas adherido a esta iniciativa");
       }
-    });
+    }).catch((error) => {console.log(error.data);});
   };
-
-  const [unfollowOpen, isUnfollowOpen] = useState();
-  const [iniciativa, setIniciativa] = useState();
-
-  const unfollow = () => {
-    isUnfollowOpen(!unfollowOpen);
-  };
-
-  const onUnfollow = (ini) => {};
 
   useEffect(() => {
     getIniciativas(nombre, startDate, endDate)
       .then((response) => {
+        console.log(response.data);
         setData(response.data);
       })
       .catch((error) => {
@@ -151,6 +148,36 @@ function Iniciativas() {
     setEndDate(end);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if(nombre.nombre !== "") {
+      setData([]);
+      getIniciativa(nombre.nombre).then((response) => {
+        if(response.data === "Dato null") {
+          NotiError("iniciativa no existe");
+        } else {
+          let newData = [];
+          newData.push(response.data);
+          setData(newData);
+        }
+      })
+      .catch((error) => {console.log(error.data)});
+    } else if(nombre.nombre === "" && startDate === null && endDate === null) {
+      getIniciativas()
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        NotiError(error.response.data);
+      });
+    } else {
+      getIniciativasRango(startDate, endDate).then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {console.log(error.data)});
+    }
+  }
+
   const onClearDate = () => {
     setStartDate(null);
     setEndDate(null);
@@ -158,7 +185,7 @@ function Iniciativas() {
   return (
     <Styles>
       <Layout>
-        <div id="buscador">
+        <form onSubmit={handleSubmit} id="buscador">
           <div class="row align-items-center">
             <div class="col-md-4">
               <label htmlFor="nombre">Nombre</label>
@@ -188,14 +215,13 @@ function Iniciativas() {
               </Button>
             </div>
             <div class="col-md-2">
-              <Button variant="secondary">Buscar</Button>
+              <Button type="submit" variant="secondary">Buscar</Button>
             </div>
           </div>
-        </div>
+        </form>
         <div id="listado">
           {data !== null &&
             data.map((ini) => {
-              //falta retocar
               return (
                 <ListGroup class="pb-5">
                   <ListGroup.Item
@@ -212,54 +238,24 @@ function Iniciativas() {
                           <p>{ini.comentario}</p>
                         </div>
                         <div id="adherirmeButton" class="col-md-1">
-                          {ciudadanoAdheridoIniciativa(
-                            ini.nombre,
-                            ciudadano.correo
-                          ) ? (
-                            <Button
-                              disabled={ciudadanoAdheridoIniciativa(
-                                ini.nombre,
-                                ciudadano.correo
-                              )}
-                            >
-                              Adherido
-                            </Button>
-                          ) : (
-                            <Button
+                          <Button
                               onClick={() => {
-                                onAdherirse(ini.nombre);
+                                iniciativa.nombre = ini.nombre;
+                                onAdherirse();
                               }}
-                              disabled={ciudadanoAdheridoIniciativa(
-                                ini.nombre,
-                                ciudadano.correo
-                              )}
-                            >
-                              Adherirse
-                            </Button>
-                          )}
+                          >
+                            Adherirse
+                          </Button>
                         </div>
                         <div class="col-md-2">
-                          {ciudadanoSigueIniciativa(
-                            ini.nombre,
-                            ciudadano.correo
-                          ) ? (
-                            <Button
-                              onClick={() => {
-                                setIniciativa(ini.nombre);
-                                unfollow();
-                              }}
-                            >
-                              Dejar de seguir
-                            </Button>
-                          ) : (
-                            <Button
-                              onClick={() => {
-                                onSeguir(ini.nombre);
-                              }}
-                            >
-                              Seguir
-                            </Button>
-                          )}
+                          <Button
+                            onClick={() => {
+                              iniciativa.nombre = ini.nombre;
+                              onSeguir();
+                            }}
+                          >
+                            Seguir
+                          </Button>
                         </div>
                         <div id="verMasButton" class="col-md-2">
                           <Button href={"/iniciativa?nombre=" + ini.nombre}>
@@ -273,35 +269,6 @@ function Iniciativas() {
               );
             })}
         </div>
-        <ModalProvider>
-          <StyledModal
-            isOpen={unfollowOpen}
-            onBackgroundClick={unfollow}
-            onEscapeKeydown={unfollow}
-          >
-            <h4>Dejar de seguir {iniciativa}</h4>
-            <hr />
-            <div className="cuerpo">
-              <h6>
-                Seguro que quieres dejar de seguir la iniciativa {iniciativa}?
-              </h6>
-            </div>
-            <div className="abajo">
-              <Button variant="secondary" onClick={unfollow}>
-                Cancelar
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  onUnfollow(iniciativa);
-                  unfollow();
-                }}
-              >
-                Confirmar
-              </Button>
-            </div>
-          </StyledModal>
-        </ModalProvider>
       </Layout>
       <Footer />
     </Styles>

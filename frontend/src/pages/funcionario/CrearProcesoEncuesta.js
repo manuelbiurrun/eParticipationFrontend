@@ -93,12 +93,12 @@ export default function CrearIniciativa() {
 
   const [proceso, setProceso] = useState({
     nombre: "",
-    descripcion: "",
     fecha: "",
-    pregunta: "",
+    descripcionAlcance: "",
+    fase: "fase_inicial",
     creador: correo,
     instrumento: "encuesta",
-    contenidoInstrumento: encuesta,
+    contenidoInstrumento: [],
   });
   // eslint-disable-next-line no-unused-vars
 
@@ -116,25 +116,18 @@ export default function CrearIniciativa() {
   const handleSubmitEncuesta = () => {
     const op = document.getElementById("instrumento").value;
     opciones.push(op);
-    //falta darle el formato correspondiente y agregar los votes:0
     document.getElementById("instrumento").value = "";
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //setear votacion
-    for (let i = 0; i <= opciones.length; i++) {
-      console.log(opciones[i]);
-      const enc = {
-        opcion: opciones[i],
-        votes: 0,
-      };
+    for (let i = 0; i < opciones.length; i++) {
+      const enc = "option:" + opciones[i] + ",votes:" + 0;
       encuesta.push(enc);
     }
-    setProceso((proceso) => ({
-      ...proceso,
-      instrumento: encuesta,
-    }));
+    encuesta.push(document.getElementById("pregunta").value);
+    proceso.contenidoInstrumento = encuesta;
+
     newProceso(proceso).then((response) => {
       if (response.status === 200) {
         setSuccess(<Alert variant="success">Proceso creado con éxito!</Alert>);
@@ -176,13 +169,13 @@ export default function CrearIniciativa() {
               <div className="form-floating">
                 <textarea
                   type="text"
-                  name="descripcion"
+                  name="descripcionAlcance"
                   className="form-control"
-                  id="descripcion"
+                  id="descripcionAlcance"
                   onChange={handleChange}
                   required
                 />
-                <label htmlFor="floatingInput">Descripcion</label>
+                <label htmlFor="floatingInput">Descripcion Alcance</label>
               </div>
               <br />
               <div className="form-floating">
@@ -203,7 +196,6 @@ export default function CrearIniciativa() {
                   name="pregunta"
                   className="form-control"
                   id="pregunta"
-                  onChange={handleChange}
                   required
                 />
                 <label htmlFor="floatingInput">Pregunta</label>
@@ -211,14 +203,14 @@ export default function CrearIniciativa() {
                 <br />
                 <div className="form-floating">
                   <h6 className="mb-3">
-                    opcion numero {opciones.length + 1} de la encuesta
+                    opcion numero {opciones.length} de la encuesta
                   </h6>
                   <input
                     type="text"
                     name="instrumento"
                     className="form-control"
                     id="instrumento"
-                    required
+                    required={opciones === []}
                   />
                   <Button onClick={() => handleSubmitEncuesta()}>
                     Agregar

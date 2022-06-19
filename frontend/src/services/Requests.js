@@ -6,7 +6,7 @@ import axios from "axios";
 // Crear base de Axios "instance"
 const instance = axios.create({
   baseURL:
-    "https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
+    "http://localhost:8080/backend-web/eParticipation",
   headers: {
     'Content-Type': 'application/json',
   },
@@ -117,9 +117,21 @@ export const loginExterno = (datosUsuario) => {
   return instance.get(`/externalAuth/facebook/${datosUsuario}`);
 };
 
-export const getIniciativas = (nombre, fechaInicio, fechaFin) => {
+export const getIniciativas = () => {
   return instance.get(
-    `/iniciativa/listar?iniciativa=${nombre}&fechaIni=${fechaInicio}?fechafin=${fechaFin}`
+    "/iniciativa/listar"
+  );
+};
+
+export const getIniciativasRango = (fechaInicio, fechaFin) => {
+  return instance.get(
+    `/iniciativa/listarRango?fecha=${fechaInicio}&fecha=${fechaFin}`
+  );
+};
+
+export const getProcesosRango = (fechaInicio, fechaFin) => {
+  return instance.get(
+    `/proceso/listarRango?fecha=${fechaInicio}&fecha=${fechaFin}`
   );
 };
 
@@ -131,13 +143,20 @@ export const updateIniciativa = (iniciativa) => {
   return instance.put("/iniciativa/modificar", iniciativa);
 };
 
+export const updateProceso = (proceso) => {
+  return instance.put("/proceso/modificar", proceso);
+}
+
 export const deleteIniciativa = (iniciativa) => {
-  console.log(iniciativa);
-  return instance.delete(`/iniciativa/baja`, iniciativa);
+  return instance.post(`/iniciativa/baja?nombre=${iniciativa}`);
 };
 
 export const getIniciativa = (nombreIniciativa) => {
   return instance.get(`/iniciativa/buscar/${nombreIniciativa}`);
+};
+
+export const getProceso = (nombreProceso) => {
+  return instance.get(`proceso/buscar/${nombreProceso}`);
 };
 
 export const getProcesos = () => {
@@ -145,7 +164,7 @@ export const getProcesos = () => {
 };
 
 export const newProceso = (proceso) => {
-  return instance.post("/procesos/alta", proceso);
+  return instance.post("/proceso/alta", proceso);
 };
 
 export const seguirAIniciativa = (idIniciativa, correoCiudadano) => {
@@ -199,14 +218,9 @@ export const ciudadanoParticipoProceso = (proceso, ciudadano) => {
   );
 };
 
-/* export const participarProceso = (proceso, ciudadano, option) => {
+export const participarProceso = (respuesta, nombre, ciudadano) => {
   return instance.get(
-    `/usuario/participar?proceso=${proceso}&user=${ciudadano}&option=${option}`
-  );
-}; */
-export const participarProceso = (proceso, ciudadano) => {
-  return instance.get(
-    `/usuario/participar?proceso=${proceso}&user=${ciudadano}`
+    `/usuario/participar?proceso=${nombre}&user=${ciudadano}`, respuesta
   );
 };
 

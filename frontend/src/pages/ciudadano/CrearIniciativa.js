@@ -88,14 +88,13 @@ box-shadow: 7px 13px 37px #000;
 export default function CrearIniciativa() {
   const [params] = useSearchParams();
   const correo = params.get("ciudadano");
-  const [recurso, setRecurso] = useState();
 
   const [iniciativa, setIniciativa] = useState({
     nombre: "",
     descripcion: "",
     fecha: "",
     creador: correo,
-    recurso: recurso, //falta convertir a binario
+    recurso: "",
   });
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState("");
@@ -109,8 +108,24 @@ export default function CrearIniciativa() {
     }));
   };
 
-  const handleUpload = (data) => {
-    setRecurso(data.target.files[0]);
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  }
+
+  const handleUpload = async (data) => {
+    const file = data.target.files[0];
+    const base64 = await convertBase64(file);
+    iniciativa.recurso = base64;
+    console.log(iniciativa);
   };
 
   const handleSubmit = (e) => {
