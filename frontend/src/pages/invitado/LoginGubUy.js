@@ -19,7 +19,7 @@ function LoginGubUy() {
 
     const tokenURL = axios.create({
       baseURL:
-        "https://auth-testing.iduruguay.gub.uy",
+        "https://cors-anywhere.herokuapp.com/https://auth-testing.iduruguay.gub.uy",
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Access-Control-Allow-Origin': '*',
