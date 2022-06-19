@@ -9,6 +9,7 @@ const instance = axios.create({
     "https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
   },
 });
 

@@ -23,7 +23,6 @@ function LoginGubUy() {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': '*',
         'Authorization': authorizationHeader,
       },
     });
