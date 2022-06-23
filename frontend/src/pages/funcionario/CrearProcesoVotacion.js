@@ -93,11 +93,12 @@ export default function CrearIniciativa() {
 
   const [proceso, setProceso] = useState({
     nombre: "",
-    descripcion: "",
     fecha: "",
-    pregunta: "",
+    descripcionAlcance: "",
+    fase: "fase_inicial",
     creador: correo,
-    instrumento: votacion,
+    instrumento: "encuesta",
+    contenidoInstrumento: [],
   });
   // eslint-disable-next-line no-unused-vars
 
@@ -112,27 +113,27 @@ export default function CrearIniciativa() {
     }));
   };
 
+  let cant = 0;
   const handleSubmitVotacion = () => {
-    const op = document.getElementById("instrumento").value;
-    opciones.push(op);
-    document.getElementById("instrumento").value = "";
+    if(cant !== 2) {
+      const op = document.getElementById("instrumento").value;
+      opciones.push(op);
+      document.getElementById("instrumento").value = "";
+      cant++;
+    } else {
+      setError("La votacion tiene solo dos opciones");
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //setear votacion
-    for (let i = 0; i <= opciones.length; i++) {
-      console.log(opciones[i]);
-      const vot = {
-        opcion: opciones[i],
-        votes: 0,
-      };
-      votacion.push(vot);
+    for (let i = 0; i < opciones.length; i++) {
+      const enc = "option:" + opciones[i] + ",votes:" + 0;
+      votacion.push(enc);
     }
-    setProceso((proceso) => ({
-      ...proceso,
-      instrumento: votacion,
-    }));
+    votacion.push(document.getElementById("pregunta").value);
+    proceso.contenidoInstrumento = votacion;
+
     newProceso(proceso).then((response) => {
       if (response.status === 200) {
         setSuccess(<Alert variant="success">Proceso creado con éxito!</Alert>);
@@ -174,13 +175,13 @@ export default function CrearIniciativa() {
               <div className="form-floating">
                 <textarea
                   type="text"
-                  name="descripcion"
+                  name="descripcionAlcance"
                   className="form-control"
-                  id="descripcion"
+                  id="descripcionAlcance"
                   onChange={handleChange}
                   required
                 />
-                <label htmlFor="floatingInput">Descripcion</label>
+                <label htmlFor="floatingInput">Descripcion Alcance</label>
               </div>
               <br />
               <div className="form-floating">
@@ -201,7 +202,6 @@ export default function CrearIniciativa() {
                   name="pregunta"
                   className="form-control"
                   id="pregunta"
-                  onChange={handleChange}
                   required
                 />
                 <label htmlFor="floatingInput">Pregunta</label>
@@ -209,20 +209,16 @@ export default function CrearIniciativa() {
                 <br />
                 <div className="form-floating">
                   <h6 className="mb-3">
-                    opcion numero {opciones.length + 1} de la votacion
+                    opcion numero {opciones.length} de la encuesta
                   </h6>
                   <input
                     type="text"
                     name="instrumento"
                     className="form-control"
                     id="instrumento"
-                    required
-                    disabled={opciones.length === 2}
+                    required={opciones === []}
                   />
-                  <Button
-                    onClick={() => handleSubmitVotacion()}
-                    disabled={opciones.length === 2}
-                  >
+                  <Button onClick={() => handleSubmitVotacion()}>
                     Agregar
                   </Button>
                 </div>

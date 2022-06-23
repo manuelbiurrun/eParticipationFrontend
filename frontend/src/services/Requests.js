@@ -9,7 +9,6 @@ const instance = axios.create({
     "https://eparticipation.web.elasticloud.uy/backend-web/eParticipation",
   headers: {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
   },
 });
 
@@ -164,6 +163,10 @@ export const getProcesos = () => {
   return instance.get("/proceso/listar");
 };
 
+export const getProcesosCiudadano = (usuario) => {
+  return instance.get(`/usuario/listarProcesos?user=${usuario}`);
+};
+
 export const newProceso = (proceso) => {
   return instance.post("/proceso/alta", proceso);
 };
@@ -197,13 +200,23 @@ export const getUsuario = (nombreCiudadano) => {
   return instance.get(`/usuario/buscar/${nombreCiudadano}`);
 };
 
-export const updateUsuario = (datos) => {
-  return instance.put("/usuario/modificar", datos);
-};//dividir en updateCiudadano y updateFuncionario
+export const updateFuncionario = (datos) => {
+  return instance.put("/usuario/modificarFuncionario", datos);
+};
+
+export const updateCiudadano = (datos) => {
+  return instance.put("usuario/modificarCiudadano", datos);
+};
 
 export const ciudadanoSigueIniciativa = (iniciativa, ciudadano) => {
   return instance.get(
-    `/usuario/ifSigue?iniciativa=${iniciativa}&user=${ciudadano}`
+    `/usuario/ifSigueI?iniciativa=${iniciativa}&user=${ciudadano}`
+  );
+};
+
+export const ciudadanoSigueProceso = (iniciativa, ciudadano) => {
+  return instance.get(
+    `/usuario/ifSigueP?iniciativa=${iniciativa}&user=${ciudadano}`
   );
 };
 
@@ -219,9 +232,9 @@ export const ciudadanoParticipoProceso = (proceso, ciudadano) => {
   );
 };
 
-export const participarProceso = (respuesta, nombre, ciudadano) => {
-  return instance.get(
-    `/usuario/participar?proceso=${nombre}&user=${ciudadano}`, respuesta
+export const participarProceso = (data) => {
+  return instance.post(
+    "/proceso/participar", data
   );
 };
 

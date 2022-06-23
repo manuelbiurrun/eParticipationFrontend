@@ -6,7 +6,7 @@ import Modal, { ModalProvider } from "styled-react-modal";
 import { AiOutlineStop } from "react-icons/ai";
 import { Noti, NotiError } from "../../components/Notification";
 import { Button } from "react-bootstrap";
-import { getUsuario, updateUsuario, dejarSeguirAIniciativa } from "../../services/Requests";
+import { getUsuario, updateCiudadano, dejarSeguirAIniciativa } from "../../services/Requests";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { fetchUserID } from "../../services/Requests";
 
@@ -140,6 +140,7 @@ const Styles = styled.div`
 export default function Perfil() {
   const usuario = fetchUserID();
   const [ciudadano, setCiudadano] = useState({
+    id: "",
     cedula: "",
     nombreCompleto: "",
     correo: "",
@@ -215,7 +216,7 @@ export default function Perfil() {
     ) {
       NotiError("las contraseñas no son iguales");
     } else {
-      updateUsuario(datosCiudadano).then((response) => {
+      updateCiudadano(datosCiudadano).then((response) => {
         if (response.status === 200) {
           Noti("datos guardados con exito!!");
           setTimeout(() => {

@@ -11,10 +11,10 @@ import Modal, { ModalProvider } from "styled-react-modal";
 import { getIniciativa, fetchUserID } from "../services/Requests";
 import { Noti, NotiError } from "../components/Notification";
 import { useSearchParams } from "react-router-dom";
-import comentarios from "../datosPrueba/comentarios";
+//import comentarios from "../datosPrueba/comentarios";
 import ciudadano from "../datosPrueba/ciudadano";
 import { TwitterShareButton} from 'react-twitter-embed';
-//import { comentarIniciativa } from "../services/Requests";
+import { comentarIniciativa } from "../services/Requests";
 
 const StyledModal = Modal.styled`
   border-radius: 5px;
@@ -65,12 +65,23 @@ const Styles = styled.div`
 `;
 
 export default function Iniciativa() {
+  const usuario = fetchUserID();
   const [params] = useSearchParams();
   const nombre = params.get("nombre");
   const [isOpen, setIsOpen] = useState(false);
   const [comment, setComment] = useState("");
 
-  const [ini, setIniciativa] = useState([]);
+  const [ini, setIniciativa] = useState({
+    nombre: "",
+    descripcion: "",
+    fecha: "",
+    estado: "",
+    creador: "",
+    adheridos: [],
+    seguidores: [],
+    comentarios: [],
+    recurso: "",
+  });
 
   useEffect(() => {
     getIniciativa(nombre)
@@ -93,10 +104,12 @@ export default function Iniciativa() {
   };
 
   const comentar = () => {
-    //comentarIniciativa(ini.nombre, ciudadano.correo, comment);
-    console.log(comment);
-    setIsOpen(!isOpen);
-    Noti("comentario relizado con exito!!");
+    comentarIniciativa(comment, usuario, ini.nombre).then(() => {
+      Noti("comentario realizado con exito!!");
+    })
+    .catch((error) => {
+      NotiError(error.data);
+    });
   };
 
   const compartirWpp = () => {
@@ -106,7 +119,6 @@ export default function Iniciativa() {
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
-    //console.log("falta la funcion");
   };
 
   return (
@@ -146,7 +158,7 @@ export default function Iniciativa() {
             </Button>}
         </div>
         <div className="comentarios">
-          {comentarios.map((com) => {
+          {ini.comentarios.map((com) => {
             return <Comentario key={com.id} data={com} />;
           })}
         </div>
@@ -160,7 +172,7 @@ export default function Iniciativa() {
           <h4>Comentario en {nombre}</h4>
           <hr />
           <div className="cuerpo">
-            <h6>{ciudadano.correo}</h6>
+            <h6>{usuario}</h6>
           </div>
           <Form.Group className="mb-3">
             <Form.Label>Comentario:</Form.Label>

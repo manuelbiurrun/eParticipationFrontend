@@ -115,6 +115,7 @@ export default function Home() {
       });
     getProcesos()
       .then((response) => {
+        console.log(response.data);
         setProcesos(response.data);
       })
       .catch((error) => {

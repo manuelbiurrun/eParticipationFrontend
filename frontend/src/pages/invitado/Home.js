@@ -94,7 +94,7 @@ function PaginaPrincipal() {
             <article key={ini.nombre}>
               <figure>
                 <img
-                  src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
+                  src={ini.recurso}
                   alt="The Pulpit Rock"
                   width="160"
                   height="115"
@@ -115,14 +115,6 @@ function PaginaPrincipal() {
         {procesos.map((proc) => {
           return (
             <article key={proc.nombre}>
-              <figure>
-                <img
-                  src="https://media.geeksforgeeks.org/wp-content/uploads/geeks-25.png"
-                  alt="The Pulpit Rock"
-                  width="160"
-                  height="115"
-                />
-              </figure>
               <h6>{proc.fecha}</h6>
               <h1>{proc.nombre}</h1>
               <p>{proc.descripcion}</p>

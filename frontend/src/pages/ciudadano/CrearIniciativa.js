@@ -96,7 +96,7 @@ export default function CrearIniciativa() {
     creador: correo,
     recurso: "",
   });
-  // eslint-disable-next-line no-unused-vars
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
 

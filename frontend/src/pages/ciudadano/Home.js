@@ -7,13 +7,14 @@ import Modal, { ModalProvider } from "styled-react-modal";
 import Poll from "@gidesan/react-polls";
 import {
   getIniciativas,
+  //getProcesosCiudadano,
   getProcesos,
   updateProceso,
   getUsuario,
   ciudadanoAdheridoIniciativa,
   participarProceso,
   ciudadanoParticipoProceso,
-  eleccionProcesoCiudadano,
+  //eleccionProcesoCiudadano,
   ciudadanoSigueIniciativa,
 } from "../../services/Requests";
 import {
@@ -115,7 +116,7 @@ export default function Home() {
           }
         })
       } else {
-        NotiError("ya seguis a esta iniciativa papa");
+        NotiError("ya seguis a esta iniciativa");
       }
     })
   .catch((error) => {
@@ -125,13 +126,15 @@ export default function Home() {
 
   const [participarOpen, isParticiparOpen] = useState();
   const [pregunta, setPregunta] = useState();
-  const [opciones, setOpciones] = useState([]);
+  let opciones = [];
   const [proceso, setProceso] = useState({
     id: "",
     nombre: "",
-    descripcion: "",
+    descripcionAlcance: "",
     fecha: "",
-    estado: "",
+    fase: "",
+    creador: "",
+    participantes: [],
     instrumento: "",
     contenidoInstrumento: [],
   });
@@ -152,7 +155,7 @@ export default function Home() {
   const obtenerOpcionRetorno = (content) => {
     console.log(content);
     const valueOption = content.option;
-    const valueVotes = content.votes;
+    const valueVotes = content.votes.toString();
     return "option:" + valueOption + ",votes:" + valueVotes;
   }
 
@@ -163,9 +166,13 @@ export default function Home() {
       }
       return answer;
     });
-    participarProceso(proceso.nombre, ciudadano.correo, []);//[tipoInstrumento, pregunta, option]
+    console.log(proceso.instrumento);
+    console.log(pregunta);
+    console.log(opcion);
+    //participarProceso({proceso: proceso.nombre, user: ciudadano.correo, respuesta: [proceso.instrumento, pregunta, opcion]});
     proceso.contenidoInstrumento = formatearRespuesta(newAnswers);
-    updateProceso(proceso);
+    console.log(proceso);
+    //updateProceso(proceso);
   };
 
   const onAdherirse = () => {
@@ -206,15 +213,20 @@ export default function Home() {
     const array = content.split(",");//array[0] es la option y array[1] es el votes
     const valueOption = array[0].split(":")[1];
     const valueVotes = array[1].split(":")[1];
+    console.log(valueOption + ", " + valueVotes);
     return {"option": valueOption, "votes": valueVotes};    
   }
 
+  let tieneOpciones;
   const sacarOpciones = (pr) => {
     const contenido = pr.contenidoInstrumento;
+    console.log(contenido);
     for(let i = 0; i < contenido.length-1; i++) {
       const opcion = obtenerOpcion(contenido[i]);
       opciones.push(opcion);
     }
+    console.log(opciones);
+    tieneOpciones = true;
     sacarPregunta(pr);
   }
 
@@ -227,6 +239,15 @@ export default function Home() {
         console.log(error.response.data);
         NotiError(error.response.data);
       });
+    /* getProcesosCiudadano(usuario)
+      .then((response) => {
+        console.log(response.data);
+        setProcesos(response.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+        NotiError(error.response.data);
+      }); */
     getProcesos()
       .then((response) => {
         console.log(response.data);
@@ -256,13 +277,15 @@ export default function Home() {
     theme: "blue",
   };
 
+  const opt = [{option: "primera", votes: "0"}];
+
   return (
     <Styles>
       <nav>
         <h1 align="center">Bienvenido {ciudadano.nombre}!!</h1>
       </nav>
       <aside id="izquierda">
-        {iniciativas.map((ini, index) => {
+        {iniciativas.length !== 0 ? iniciativas.map((ini, index) => {
           return (
             <article key={index}>
               <figure>
@@ -297,7 +320,7 @@ export default function Home() {
               </Button>
             </article>
           );
-        })}
+        }): <h1>no hay iniciativas</h1>}
         <Button id="todasButton" variant="danger" href="/iniciativas">
           Ver mas iniciativas
         </Button>
@@ -308,17 +331,21 @@ export default function Home() {
             <article key={proc.id}>
               <h6>{proc.fecha}</h6>
               <h1>{proc.nombre}</h1>
-              {/* <p>{proc.descripcion}</p> */}
-              <p>descripcion</p>
+              <p>Edad minima: {proc.descripcionAlcance}</p>
               <Button href={"proceso?nombre=" + proc.nombre}>Ver mas</Button>
               <Button
                 onClick={() => {
                   setProceso(proc);
-                  if(opciones.length !== 0) {
-                    setOpciones([]);
-                  }
-                  sacarOpciones(proc);
-                  participar();
+                  opciones = [];
+                  ciudadanoParticipoProceso(proc.nombre, ciudadano.correo).then((response) => {
+                    const participo = response.data;
+                    console.log(response.data);
+                    console.log(proc);
+                    if(!participo) {
+                      sacarOpciones(proc);
+                    }
+                    participar();
+                  })
                 }}
               >
                 Participar
@@ -339,7 +366,8 @@ export default function Home() {
           <h4>Participar en {proceso.nombre}</h4>
           <hr />
           <div className="cuerpo">
-            {ciudadanoParticipoProceso(proceso, usuario) ? (
+            {console.log(opciones)}
+{/*             {tieneOpciones ? ( */}
               <Poll
                 id="poll"
                 question={pregunta}
@@ -348,9 +376,9 @@ export default function Home() {
                 customStyles={pollStyles1}
                 noStorage
               />
-            ) : (
-              <h6>ya votaste {eleccionProcesoCiudadano}</h6>
-            )}
+            {/* ) : (
+              <h6>ya votaste en el proceso {proceso.nombre}</h6>
+            )}*/}
           </div>
           <div className="abajo">
             <Button

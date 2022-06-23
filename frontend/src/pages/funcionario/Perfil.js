@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Footer } from "../../components/Footer";
 import user from "../../datosPrueba/ciudadano";
-//import inis from "../../datosPrueba/iniciativas";
 import Modal, { ModalProvider } from "styled-react-modal";
 import { CgClose } from "react-icons/cg";
 import { Noti, NotiError } from "../../components/Notification";
@@ -11,7 +10,7 @@ import { GiMagnifyingGlass } from "react-icons/gi";
 import {
   getUsuario,
   deleteIniciativa,
-  updateUsuario,
+  updateFuncionario,
 } from "../../services/Requests";
 import { fetchUserID } from "../../services/Requests";
 
@@ -145,17 +144,28 @@ const Styles = styled.div`
 export default function Perfil() {
   const usuario = fetchUserID();
   const [funcionario, setFuncionario] = useState({
+    id: "",
     nombre: "",
+    cedula: "",
     correo: "",
-    fechaNac: "",
+    fnac: "",
+    organismo: "",
     nacionalidad: "",
+    cargo: "",
     domicilio: "",
     procesoCreados: [],
   });
 
   const [datosFuncionario, setDatosFuncionario] = useState({
+    id: funcionario.id,
+    cedula: funcionario.cedula,
     nombreCompleto: "",
     domicilio: "",
+    nacionalidad: funcionario.nacionalidad,
+    organismo: funcionario.organismo,
+    cargo: funcionario.cargo,
+    rol: "Funcionario",
+    fnac: funcionario.fnac,
     correo: "",
     contrasena: "",
   });
@@ -207,14 +217,20 @@ export default function Perfil() {
 
   const onGuardar = (e) => {
     e.preventDefault();
-    const confirmar = document.getElementById("confirmar").value;
+    let cambioContraseña = false;
+    let confirmar = "";
+    if(datosFuncionario.contrasena !== "") {
+      cambioContraseña = true;
+      confirmar = document.getElementById("confirmar").value;
+    }
     if (
-      datosFuncionario.contrasena !== "" &&
-      datosFuncionario.contrasena !== confirmar
+      cambioContraseña ||
+      (datosFuncionario.contrasena !== "" &&
+      datosFuncionario.contrasena !== confirmar)
     ) {
       NotiError("las contraseñas no son iguales");
     } else {
-      updateUsuario(datosFuncionario).then((response) => {
+      updateFuncionario(datosFuncionario).then((response) => {
         if (response.status === 200) {
           Noti("datos guardados con exito!!");
           setTimeout(() => {
@@ -240,9 +256,10 @@ export default function Perfil() {
                 alt="nose"
               />
               <span class="font-weight-bold">{funcionario.nombre}</span>
-              <span class="font-weight-bold">{funcionario.fNac}</span>
+              <span class="font-weight-bold">{funcionario.fnac}</span>
               <span class="text-black-50">{funcionario.correo}</span>
               <span class="text-black-50">{funcionario.nacionalidad}</span>
+              <span class="text-black-50">{funcionario.organismo}</span>
             </div>
           </div>
           <form onSubmit={onGuardar} class="col-md-4 border-right">

@@ -4,16 +4,13 @@ import styled from "styled-components";
 import { Footer } from "../components/Footer";
 import { Layout } from "../components/Layout";
 import { Form } from "react-bootstrap";
-import { fetchUserRole } from "../services/Requests";
 import Comentario from "../components/Comentario";
 import Modal, { ModalProvider } from "styled-react-modal";
-import { getProceso, fetchUserID } from "../services/Requests";
+import { getProceso, fetchUserID, comentarIniciativa, fetchUserRole } from "../services/Requests";
 import { Noti, NotiError } from "../components/Notification";
 import { useSearchParams } from "react-router-dom";
-import comentarios from "../datosPrueba/comentarios";
-import ciudadano from "../datosPrueba/ciudadano";
+//import comentarios from "../datosPrueba/comentarios";
 import { TwitterShareButton} from 'react-twitter-embed';
-//import { comentarIniciativa } from "../services/Requests";
 
 const StyledModal = Modal.styled`
   border-radius: 5px;
@@ -70,6 +67,7 @@ const Styles = styled.div`
 `;
 
 export default function Proceso() {
+  const usuario = fetchUserID();
   const [params] = useSearchParams();
   const nombre = params.get("nombre");
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +79,7 @@ export default function Proceso() {
     nombre: "",
     fecha: "",
     instrumento: "",
+    comentarios: [],
     contenidoInstrumento: [],
     alcance: "",
     fase: "",
@@ -100,16 +99,17 @@ export default function Proceso() {
 
   const sacarOpciones = (res) => {
     const contenido = res.contenidoInstrumento;
-    for(let i = 0; i < contenido.length-1; i++) {
+    for(let i = 0; i < contenido.length; i++) {
       const opcion = obtenerOpcion(contenido[i]);
       opciones.push(opcion);
     }
-    sacarPregunta(res);
   }
 
   useEffect(() => {
     getProceso(nombre)
       .then((response) => {
+        console.log(response.data);
+        sacarPregunta(response.data);
         if(opciones.length === 0) {
           sacarOpciones(response.data);
         }
@@ -118,6 +118,7 @@ export default function Proceso() {
       .catch((error) => {
         NotiError(error.data);
       });
+  // eslint-disable-next-line
   }, []);
 
   const toggleModal = () => {
@@ -129,15 +130,16 @@ export default function Proceso() {
   };
 
   const comentar = () => {
-    //comentarIniciativa(ini.nombre, ciudadano.correo, comment);
-    console.log(comment);
-    setIsOpen(!isOpen);
-    Noti("comentario relizado con exito!!");
+    comentarIniciativa(comment, usuario, proc.nombre).then(() => {
+      Noti("comentario realizado con exito!!");
+    })
+    .catch((error) => {
+      NotiError(error.data);
+    });
   };
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
-    //console.log("falta la funcion");
   };
 
   return (
@@ -151,7 +153,7 @@ export default function Proceso() {
         {opciones.map((op, index) => {
           return(
             <div key={index}>
-              <h6 align="center">{op.option} | {op.votes}</h6>
+              <h6 align="center">{op.option}</h6>
             </div>
           );
         })}
@@ -170,9 +172,9 @@ export default function Proceso() {
           ) : null}
         </div>
         <div className="comentarios">
-          {comentarios.map((com) => {
+          {proc.comentarios.length === 0 ? proc.comentarios.map((com) => {
             return <Comentario key={com.id} data={com} />;
-          })}
+          }):<h3>no hay comentarios</h3>}
         </div>
       </Layout>
       <ModalProvider>
@@ -184,7 +186,7 @@ export default function Proceso() {
           <h4>Comentario en {nombre}</h4>
           <hr />
           <div className="cuerpo">
-            <h6>{ciudadano.correo}</h6>
+            <h6>{usuario}</h6>
           </div>
           <Form.Group className="mb-3">
             <Form.Label>Comentario:</Form.Label>

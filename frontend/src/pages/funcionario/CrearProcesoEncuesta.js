@@ -127,7 +127,6 @@ export default function CrearIniciativa() {
     }
     encuesta.push(document.getElementById("pregunta").value);
     proceso.contenidoInstrumento = encuesta;
-
     newProceso(proceso).then((response) => {
       if (response.status === 200) {
         setSuccess(<Alert variant="success">Proceso creado con éxito!</Alert>);
