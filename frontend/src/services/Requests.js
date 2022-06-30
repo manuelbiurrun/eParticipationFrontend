@@ -75,7 +75,6 @@ export const clearState = () => {
   localStorage.removeItem("userRole");
   localStorage.removeItem("userID");
   localStorage.removeItem("userCI");
-  sessionStorage.removeItem("facebookLogin");
   sessionStorage.clear();
   window.location.replace("/");
 };
@@ -103,12 +102,11 @@ export const getToken = () => {
 
 export const userLogin = () => {
   sessionStorage.setItem("facebookLogin", false);
-  //faltan las variables de entorno(.env)
   const authURL =
     "https://auth-testing.iduruguay.gub.uy/oidc/v1/authorize?" +
     "response_type=code" +
     "&client_id=890192" +
-    "&redirect_uri=https%3A%2F%2Feparticipationfront.herokuapp.com%2FloginGubUy" +
+    "&redirect_uri=https%3A%2F%2localhost" +
     "&scope=openid%20personal%20email";
   return window.location.replace(authURL);
 };
@@ -185,7 +183,14 @@ export const dejarSeguirAIniciativa = (idIniciativa, correoCiudadano) => {
 
 export const comentarIniciativa = (comentario, usuario, iniciativa) => {
   return instance.post(
-    `/iniciativa/comentar?iniciativa=${iniciativa}&user=${usuario}`,
+    `/iniciativa/comentar?comentario=${comentario}&user=${usuario}&iniciativa=${iniciativa}`,
+    comentario
+  );
+};
+
+export const comentarProceso = (comentario, usuario, proceso) => {
+  return instance.post(
+    `/iniciativa/comentar?comentario=${comentario}&user=${usuario}&proceso=${proceso}`,
     comentario
   );
 };
@@ -200,12 +205,8 @@ export const getUsuario = (nombreCiudadano) => {
   return instance.get(`/usuario/buscar/${nombreCiudadano}`);
 };
 
-export const updateFuncionario = (datos) => {
-  return instance.put("/usuario/modificarFuncionario", datos);
-};
-
-export const updateCiudadano = (datos) => {
-  return instance.put("usuario/modificarCiudadano", datos);
+export const updateUsuario = (datos) => {
+  return instance.put("/usuario/modificarUsuario", datos);
 };
 
 export const ciudadanoSigueIniciativa = (iniciativa, ciudadano) => {

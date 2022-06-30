@@ -23,6 +23,8 @@ import {
   fetchUserID,
 } from "../../services/Requests";
 
+import picture from "../../media/default-picture.jpg";
+
 const StyledModal = Modal.styled`
   border-radius: 5px;
   padding: 1.5%;
@@ -126,7 +128,7 @@ export default function Home() {
 
   const [participarOpen, isParticiparOpen] = useState();
   const [pregunta, setPregunta] = useState();
-  let opciones = [];
+  const [opciones, setOpciones] = useState();
   const [proceso, setProceso] = useState({
     id: "",
     nombre: "",
@@ -153,7 +155,6 @@ export default function Home() {
   }
 
   const obtenerOpcionRetorno = (content) => {
-    console.log(content);
     const valueOption = content.option;
     const valueVotes = content.votes.toString();
     return "option:" + valueOption + ",votes:" + valueVotes;
@@ -166,13 +167,11 @@ export default function Home() {
       }
       return answer;
     });
-    console.log(proceso.instrumento);
-    console.log(pregunta);
-    console.log(opcion);
-    //participarProceso({proceso: proceso.nombre, user: ciudadano.correo, respuesta: [proceso.instrumento, pregunta, opcion]});
+    const respuesta = [proceso.instrumento, pregunta, opcion];
+    participarProceso({proceso: proceso.nombre, user: ciudadano.correo, respuesta: respuesta});
     proceso.contenidoInstrumento = formatearRespuesta(newAnswers);
-    console.log(proceso);
-    //updateProceso(proceso);
+    sessionStorage.removeItem("tieneOpciones");
+    updateProceso(proceso);
   };
 
   const onAdherirse = () => {
@@ -213,21 +212,19 @@ export default function Home() {
     const array = content.split(",");//array[0] es la option y array[1] es el votes
     const valueOption = array[0].split(":")[1];
     const valueVotes = array[1].split(":")[1];
-    console.log(valueOption + ", " + valueVotes);
     return {"option": valueOption, "votes": valueVotes};    
   }
 
-  let tieneOpciones;
   const sacarOpciones = (pr) => {
     const contenido = pr.contenidoInstrumento;
-    console.log(contenido);
+    let tempOpciones = [];
     for(let i = 0; i < contenido.length-1; i++) {
       const opcion = obtenerOpcion(contenido[i]);
-      opciones.push(opcion);
+      tempOpciones.push(opcion);
     }
-    console.log(opciones);
-    tieneOpciones = true;
+    setOpciones(tempOpciones);
     sacarPregunta(pr);
+    sessionStorage.setItem("tieneOpciones", true);
   }
 
   useEffect(() => {
@@ -277,8 +274,6 @@ export default function Home() {
     theme: "blue",
   };
 
-  const opt = [{option: "primera", votes: "0"}];
-
   return (
     <Styles>
       <nav>
@@ -290,7 +285,7 @@ export default function Home() {
             <article key={index}>
               <figure>
                 <img
-                  src={ini.recurso}
+                  src={ini.recurso ? ini.recurso : picture}
                   alt="The Pulpit Rock"
                   width="160"
                   height="115"
@@ -336,7 +331,6 @@ export default function Home() {
               <Button
                 onClick={() => {
                   setProceso(proc);
-                  opciones = [];
                   ciudadanoParticipoProceso(proc.nombre, ciudadano.correo).then((response) => {
                     const participo = response.data;
                     console.log(response.data);
@@ -366,8 +360,7 @@ export default function Home() {
           <h4>Participar en {proceso.nombre}</h4>
           <hr />
           <div className="cuerpo">
-            {console.log(opciones)}
-{/*             {tieneOpciones ? ( */}
+            {sessionStorage.getItem("tieneOpciones") ? (
               <Poll
                 id="poll"
                 question={pregunta}
@@ -376,9 +369,9 @@ export default function Home() {
                 customStyles={pollStyles1}
                 noStorage
               />
-            {/* ) : (
+            ) : (
               <h6>ya votaste en el proceso {proceso.nombre}</h6>
-            )}*/}
+            )}
           </div>
           <div className="abajo">
             <Button

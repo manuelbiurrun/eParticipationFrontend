@@ -87,13 +87,28 @@ const Styles = styled.div`
 
 function Login() {
   const [error, guardarError] = useState("");
+  const [data, setData] = useState();
+
+  window.FB.init({
+    appId      : '417728810194551',
+    status     : true,
+    xfbml      : true,
+    version    : 'v2.7'
+  });
 
   const handleFacebookClick = () => {
     sessionStorage.setItem("facebookLogin", true);
   };
 
   const responseFacebook = (response) => {
-    loginExterno(response)
+    if (response.status === "unknown") {
+      guardarError("Login failed!");
+      return false;
+    }
+    setData(response);
+    console.log(data);
+    if (response.accessToken) {
+      loginExterno(response)
       .then((res) => {
         if (res.status === 200) {
           localStorage.setItem("token", Cookie.get("authorization"));
@@ -117,6 +132,9 @@ function Login() {
           guardarError("Algo salio mal!!");
         }
       });
+    } else {
+      guardarError("Login failed!");
+    }
   };
 
   let componente;
@@ -143,7 +161,7 @@ function Login() {
               LOGIN WITH GUB.UY
             </Button>
             <FacebookLogin
-              appId={process.env.APP_ID}
+              appId={417728810194551}
               autoLoad={false}
               fields="name,email,picture"
               onClick={handleFacebookClick}

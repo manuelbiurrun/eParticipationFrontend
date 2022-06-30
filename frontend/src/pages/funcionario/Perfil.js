@@ -10,7 +10,7 @@ import { GiMagnifyingGlass } from "react-icons/gi";
 import {
   getUsuario,
   deleteIniciativa,
-  updateFuncionario,
+  updateUsuario,
 } from "../../services/Requests";
 import { fetchUserID } from "../../services/Requests";
 
@@ -156,18 +156,16 @@ export default function Perfil() {
     procesoCreados: [],
   });
 
+  //le agregamos la contraseña cuando tengamos el login
   const [datosFuncionario, setDatosFuncionario] = useState({
     id: funcionario.id,
     cedula: funcionario.cedula,
     nombreCompleto: "",
-    domicilio: "",
+    correo: "",
     nacionalidad: funcionario.nacionalidad,
-    organismo: funcionario.organismo,
-    cargo: funcionario.cargo,
+    domicilio: "",
     rol: "Funcionario",
     fnac: funcionario.fnac,
-    correo: "",
-    contrasena: "",
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -230,7 +228,7 @@ export default function Perfil() {
     ) {
       NotiError("las contraseñas no son iguales");
     } else {
-      updateFuncionario(datosFuncionario).then((response) => {
+      updateUsuario(datosFuncionario).then((response) => {
         if (response.status === 200) {
           Noti("datos guardados con exito!!");
           setTimeout(() => {

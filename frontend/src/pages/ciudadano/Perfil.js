@@ -6,7 +6,7 @@ import Modal, { ModalProvider } from "styled-react-modal";
 import { AiOutlineStop } from "react-icons/ai";
 import { Noti, NotiError } from "../../components/Notification";
 import { Button } from "react-bootstrap";
-import { getUsuario, updateCiudadano, dejarSeguirAIniciativa } from "../../services/Requests";
+import { getUsuario, updateUsuario, dejarSeguirAIniciativa } from "../../services/Requests";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { fetchUserID } from "../../services/Requests";
 
@@ -153,11 +153,16 @@ export default function Perfil() {
     iniciativasSeguidas: [],
   });
 
+//le agregamos la contraseña cuando tengamos el login
   const [datosCiudadano, setDatosCiudadano] = useState({
+    id: ciudadano.id,
+    cedula: ciudadano.cedula,
     nombreCompleto: "",
-    domicilio: "",
     correo: "",
-    contrasena: "",
+    nacionalidad: ciudadano.nacionalidad,
+    domicilio: "",
+    rol: "Funcionario",
+    fnac: ciudadano.fnac,
   });
 
   // eslint-disable-next-line no-unused-vars
@@ -216,7 +221,7 @@ export default function Perfil() {
     ) {
       NotiError("las contraseñas no son iguales");
     } else {
-      updateCiudadano(datosCiudadano).then((response) => {
+      updateUsuario(datosCiudadano).then((response) => {
         if (response.status === 200) {
           Noti("datos guardados con exito!!");
           setTimeout(() => {
