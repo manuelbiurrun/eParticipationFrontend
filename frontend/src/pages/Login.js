@@ -89,13 +89,6 @@ function Login() {
   const [error, guardarError] = useState("");
   const [data, setData] = useState();
 
-  window.FB.init({
-    appId      : '417728810194551',
-    status     : true,
-    xfbml      : true,
-    version    : 'v2.7'
-  });
-
   const handleFacebookClick = () => {
     sessionStorage.setItem("facebookLogin", true);
   };
