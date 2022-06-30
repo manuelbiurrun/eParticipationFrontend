@@ -30,7 +30,7 @@ function LoginGubUy() {
     let bodyFormData = new FormData();
     bodyFormData.append('grant_type', 'authorization_code');
     bodyFormData.append('code', code);
-    bodyFormData.append('redirect_uri', "https%3A%2F%2Feparticipationfront.herokuapp.com%2FloginGubUy");
+    bodyFormData.append('redirect_uri', "https%3A%2F%2Fwe-eparticipation.web.elasticloud.uy%2FloginGubUy");
     bodyFormData.append('state', 'info');
 
     tokenURL.post("/oidc/v1/token", bodyFormData).then((response) => {
